@@ -1,0 +1,89 @@
+# =========================
+# Build directories
+# =========================
+build/
+cmake-build-*/
+out/
+bin/
+lib/
+
+# =========================
+# CMake generated files
+# =========================
+CMakeCache.txt
+CMakeFiles/
+CTestTestfile.cmake
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+
+# =========================
+# Make / Ninja
+# =========================
+Makefile
+*.ninja
+.ninja_deps
+.ninja_log
+
+# =========================
+# Visual Studio / MSVC
+# =========================
+*.sln
+*.vcxproj*
+*.vcproj*
+*.pdb
+*.idb
+*.ilk
+*.obj
+*.lib
+*.dll
+*.exe
+
+# =========================
+# GCC / Clang artifacts
+# =========================
+*.o
+*.a
+*.so
+*.dylib
+
+# =========================
+# Test outputs
+# =========================
+Testing/
+test_results.xml
+*.log
+
+# =========================
+# VS Code settings
+# =========================
+.vscode/
+
+# (Optional)
+# If you want to share debugger & task configs,
+# comment the line above and use:
+# .vscode/*
+# !.vscode/launch.json
+# !.vscode/tasks.json
+# !.vscode/settings.json
+
+# =========================
+# OS-specific files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Coverage reports (optional)
+# =========================
+coverage/
+*.gcda
+*.gcno
+*.gcov
+
+# =========================
+# Temporary & backup files
+# =========================
+*~
+*.swp
+*.tmp
