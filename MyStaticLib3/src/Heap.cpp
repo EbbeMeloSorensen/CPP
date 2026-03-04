@@ -1,9 +1,9 @@
-#include "MyStaticLib/Heap.h"
+#include "MyStaticLib3/Heap.h"
 #include <iomanip>
 
 using namespace std;
 
-namespace MyStaticLib
+namespace MyStaticLib3
 {
     CDoubleHeap::CDoubleHeap()
     {

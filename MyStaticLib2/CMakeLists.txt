@@ -1,20 +1,20 @@
 cmake_minimum_required(VERSION 3.16)
-project(MyStaticLib VERSION 1.0 LANGUAGES CXX)
+project(MyStaticLib2 VERSION 1.0 LANGUAGES CXX)
 
 include(FetchContent)
 
 # -------------------------------------------------
 # Library
 # -------------------------------------------------
-add_library(MyStaticLib STATIC
+add_library(MyStaticLib2 STATIC
     src/math_utils.cpp
 )
 
-target_include_directories(MyStaticLib
+target_include_directories(MyStaticLib2
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-target_compile_features(MyStaticLib PUBLIC cxx_std_17)
+target_compile_features(MyStaticLib2 PUBLIC cxx_std_17)
 
 # -------------------------------------------------
 # GoogleTest (download automatically)
@@ -37,7 +37,7 @@ add_executable(MyStaticLibTests
 
 target_link_libraries(MyStaticLibTests
     PRIVATE
-        MyStaticLib
+        MyStaticLib2
         GTest::gtest_main
 )
 

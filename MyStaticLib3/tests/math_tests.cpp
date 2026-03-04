@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
-#include "MyStaticLib/Heap.h"
+#include "MyStaticLib3/Heap.h"
 
-using namespace MyStaticLib;
+using namespace MyStaticLib3;
 
 TEST(AddiwwtionTests, AddsPosiwwtiveNumbers)
 {

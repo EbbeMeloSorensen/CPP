@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 
-namespace MyStaticLib
+namespace MyStaticLib3
 {
     class CDoubleHeap
     {

@@ -1,7 +1,7 @@
-#include "MyStaticLib/Calculator.h"
+#include "MyStaticLib3/Calculator.h"
 #include <stdexcept>
 
-namespace MyStaticLib
+namespace MyStaticLib3
 {
     Calculator::Calculator()
         : _operationCount(0)

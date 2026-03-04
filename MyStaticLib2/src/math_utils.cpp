@@ -1,6 +1,6 @@
-#include "MyStaticLib/math_utils.h"
+#include "MyStaticLib2/math_utils.h"
 
-namespace MyStaticLib
+namespace MyStaticLib2
 {
     int add(int a, int b)
     {

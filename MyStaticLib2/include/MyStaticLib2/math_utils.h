@@ -1,6 +1,6 @@
 #pragma once
 
-namespace MyStaticLib
+namespace MyStaticLib2
 {
     int add(int a, int b);
 }
