@@ -1,17 +1,13 @@
 #include <gtest/gtest.h>
-#include "MyStaticLib/math_utils.h"
+#include "MyStaticLib/Heap.h"
 
-TEST(AdditionTests, AddsPositiveNumbers)
+using namespace MyStaticLib;
+
+TEST(AddiwwtionTests, AddsPosiwwtiveNumbers)
 {
-    EXPECT_EQ(5, MyStaticLib::add(2, 3));
+    CDoubleHeap heap1;
+    int size = heap1.GetSize();
+    
+    EXPECT_EQ(0, size);
 }
 
-TEST(AdditionTests, AddsNegativeNumbers)
-{
-    EXPECT_EQ(-5, MyStaticLib::add(-2, -3));
-}
-
-TEST(AdditionTests, MixedSigns)
-{
-    EXPECT_EQ(1, MyStaticLib::add(3, -2));
-}

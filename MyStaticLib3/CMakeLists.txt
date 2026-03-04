@@ -7,7 +7,8 @@ include(FetchContent)
 # Library
 # -------------------------------------------------
 add_library(MyStaticLib STATIC
-    src/math_utils.cpp
+    src/Heap.cpp
+    src/Calculator.cpp
 )
 
 target_include_directories(MyStaticLib
