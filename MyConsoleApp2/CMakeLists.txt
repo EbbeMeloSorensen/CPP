@@ -9,6 +9,7 @@ add_executable(MyConsoleApp2
 target_link_libraries(MyConsoleApp2
     PRIVATE
         MyStaticLib3
+        Containers
 ) 
 
 target_compile_features(MyConsoleApp2 PRIVATE cxx_std_17)
