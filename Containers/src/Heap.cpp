@@ -1,4 +1,6 @@
 #include "Containers/Heap.h"
+#include <algorithm>
+#include <random>
 #include <iomanip>
 
 using namespace std;
@@ -130,6 +132,13 @@ namespace Containers
 
         for(index = GetSize() / 2 - 1; index >= 0; index--)
             Heapify(index);
+    }
+
+    void CDoubleHeap::Shuffle()
+    {
+        random_device rd;
+        mt19937 g(rd());
+        shuffle(m_Elements.begin(), m_Elements.end(), g);
     }
 
     void CDoubleHeap::IncreaseKey(int index)
