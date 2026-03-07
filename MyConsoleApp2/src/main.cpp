@@ -2,6 +2,7 @@
 #include <MyStaticLib3/Calculator.h>
 #include <Containers/Heap.h>
 #include <Containers/BinTree.h>
+#include <Containers/MxCifQuadTree.h>
 
 // Dette projekt linker til de 2 hjemmelavede static link libraries vist ovenfor
 
@@ -31,6 +32,14 @@ int main()
 
     std::cout << "My BinTree:" << std::endl;
     binTree1.Display(std::cout);
+
+    // Fun with MxCifQuadTree
+    Containers::CRectangle rectangle(0.0, 0.0, 10.0, 10.0);
+    Containers::CMxCifQuadTree mxCifQuadTree1(rectangle);
+
+    // Todo: insert some rectangles
+    
+    std::cout << std::endl << "Done :)" << std::endl;
     
     return 0;
 }

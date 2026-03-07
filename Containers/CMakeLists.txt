@@ -9,6 +9,7 @@ include(FetchContent)
 add_library(Containers STATIC
     src/Heap.cpp
     src/BinTree.cpp
+    src/MxCifQuadTree.cpp
 )
 
 target_include_directories(Containers
