@@ -39,6 +39,11 @@ namespace Containers
 
         ~CRectangle();
 
+        double GetCenterX() const;
+        double GetCenterY() const;
+        double GetWidth() const;
+        double GetHeight() const;
+
         CRectangle& operator= (const CRectangle& P);
 
         bool Intersects(const CRectangle& P);

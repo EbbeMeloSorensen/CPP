@@ -163,6 +163,26 @@ namespace Containers
     CRectangle::~CRectangle()
     {}
 
+    double CRectangle::GetCenterX() const
+    {
+        return m_cx;
+    }
+
+    double CRectangle::GetCenterY() const
+    {
+        return m_cy;
+    }
+
+    double CRectangle::GetWidth() const
+    {
+        return m_lx;
+    }
+
+    double CRectangle::GetHeight() const
+    {
+        return m_ly;
+    }
+
     // Assignment operator
     CRectangle& CRectangle::operator=(const CRectangle& P)
     {

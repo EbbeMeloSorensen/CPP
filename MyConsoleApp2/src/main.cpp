@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <conio.h>
 #include <time.h>
+#include <fstream>
+#include <sstream>
+#include <string>
 #include <iostream>
 #include <iomanip>
 #include <vector>
@@ -462,6 +465,12 @@ void mxcifquadtree_test(bool waitForKey)
     cout << "(but rejecting intersections this time)" << endl; 
     Continue(waitForKey);
 
+    ofstream file("mxcifquadtree3.svg");
+
+    auto magnification = 8.0;
+
+    file << "<svg width=\"" << 1000 * magnification << "\" height=\"" << 1000 * magnification << "\" xmlns=\"http://www.w3.org/2000/svg\">" << endl;
+
     nNonIntersecting = 0;
     start = std::chrono::steady_clock::now();
     for(it = Rectangles.begin(); it != Rectangles.end(); it++)
@@ -470,11 +479,27 @@ void mxcifquadtree_test(bool waitForKey)
         {
             MxCifQuadTree3.Insert(&(*it));
             nNonIntersecting++;
+
+            auto centerX = it->GetCenterX();
+            auto centerY = it->GetCenterY();
+            auto width = it->GetWidth();
+            auto height = it->GetHeight();
+
+            file << "  <rect";
+            file << " width=\"" << width * magnification << "\"";
+            file << " height=\"" << height * magnification << "\"";
+            file << " x=\"" << (centerX - width / 2) * magnification << "\"";
+            file << " y=\"" << (centerY - height / 2) * magnification << "\"";
+            file << " />" << endl;
         }
     }
+    
     end = std::chrono::steady_clock::now();
     duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
     cout << "Elapsed time for rejecting intersections: " << duration.count() << " ms\n";
+
+    file << "</svg>" << endl;
+    file.close();
 }
 
 int main()

@@ -16,6 +16,7 @@ int main()
     file2 << "<svg width=\"500\" height=\"500\" xmlns=\"http://www.w3.org/2000/svg\">" << endl;
     file2 << "  <rect width=\"200\" height=\"100\" x=\"10\" y=\"10\" rx=\"20\" ry=\"20\" fill=\"blue\" />" << endl;
     file2 << "  <rect width=\"200\" height=\"100\" x=\"110\" y=\"60\" fill=\"green\" />" << endl;
+    file2 << "  <rect width=\"200\" height=\"100\" x=\"160\" y=\"110\" />" << endl;
     file2 << "</svg>" << endl;
     file2.close();
 
