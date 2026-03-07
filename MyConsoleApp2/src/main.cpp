@@ -15,7 +15,8 @@
 #include <Containers/CyclicArray.h>
 #include <Containers/MxCifQuadTree.h>
 
-// Dette projekt linker til de 2 hjemmelavede static link libraries vist ovenfor
+// Dette projekt linker til de 2 hjemmelavede static link libraries: MyStaticLib3 og Containers
+// Det udgør reelt også en simpel testapplikation for Containers libraryet
 
 using namespace std;
 
