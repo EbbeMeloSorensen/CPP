@@ -1,21 +1,21 @@
 cmake_minimum_required(VERSION 3.16)
-project(MyStaticLib VERSION 1.0 LANGUAGES CXX)
+project(MyStaticLib3 VERSION 1.0 LANGUAGES CXX)
 
 include(FetchContent)
 
 # -------------------------------------------------
 # Library
 # -------------------------------------------------
-add_library(MyStaticLib STATIC
+add_library(MyStaticLib3 STATIC
     src/Heap.cpp
     src/Calculator.cpp
 )
 
-target_include_directories(MyStaticLib
+target_include_directories(MyStaticLib3
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-target_compile_features(MyStaticLib PUBLIC cxx_std_17)
+target_compile_features(MyStaticLib3 PUBLIC cxx_std_17)
 
 # -------------------------------------------------
 # GoogleTest (download automatically)
