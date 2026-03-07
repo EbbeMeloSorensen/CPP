@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include "MyStaticLib3/Calculator.h"
 #include "MyStaticLib3/Heap.h"
 
 using namespace MyStaticLib3;

@@ -38,7 +38,7 @@ add_executable(MyStaticLibTests
 
 target_link_libraries(MyStaticLibTests
     PRIVATE
-        MyStaticLib
+        MyStaticLib3
         GTest::gtest_main
 )
 
