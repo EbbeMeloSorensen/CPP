@@ -34,52 +34,10 @@ void do_various_tests()
 {
     MyStaticLib3::Calculator calc;
     cout << "2 + 3 = " << calc.Add(2, 3) << endl;
-
-    // Fun with Heap
-    Containers::CDoubleHeap heap1;
-    heap1.Append(9.0);
-    heap1.Append(13.0);
-    heap1.Append(7.0);
-
-    cout << "Heap size = " << heap1.GetSize() << endl;
-
-    cout << "My Heap:" << endl;
-    heap1.Display(std::cout, 1);
-
-    heap1.DismissPrimary();
-
-    cout << heap1[0] << endl;
-
-    // Fun with BinTree
-    Containers::CBinTree binTree1;
-    binTree1.Insert(9.0);
-    binTree1.Insert(13.0);
-    binTree1.Insert(7.0);
-
-    cout << "My BinTree:" << endl;
-    binTree1.Display(std::cout);
-
-    // Fun with CyclicArray
-    Containers::CCyclicArray cyclicArray1(10);
-    cyclicArray1.push_back(9.0);
-    cyclicArray1.push_front(7.0);
-    cyclicArray1.push_back(13.0);
-
-    cout << "Size of cyclic array" << cyclicArray1.GetSize() << endl;
-
-    // Fun with MxCifQuadTree
-    Containers::CRectangle rectangle(0.0, 0.0, 10.0, 10.0);
-    Containers::CMxCifQuadTree mxCifQuadTree1(rectangle);
-
-    // Todo: insert some rectangles
-    
-    cout << endl << "Done :)" << endl;
 }
 
-void heap_test()
+void heap_test(bool waitForKey)
 {
-    bool waitForKey = false;
-
     vector<double> vector1;
     Containers::CDoubleHeap heap1;
     int i, n = 1000000;
@@ -225,13 +183,308 @@ void heap_test()
     cout << "Elapsed time for make_heap (from stl - the C++ standard template library): " << duration.count() << " ms\n";
 }
 
+void bintree_test(bool waitForKey)
+{
+    Containers::CBinTree BinTree1, BinTree2;
+    double Value;
+    int i, n = 1000000;
+
+    cout << "\nBINTREE TEST:\n" << endl;
+
+    cout << "Inserting 10 doubles into BinTree1.." << endl;
+    Continue(waitForKey);
+
+    BinTree1.Insert(7.2);
+    BinTree1.Insert(4.1);
+    BinTree1.Insert(8.3);
+    BinTree1.Insert(5.9);
+    BinTree1.Insert(3.0);
+    BinTree1.Insert(0.2);
+    BinTree1.Insert(9.2);
+    BinTree1.Insert(7.2);
+    BinTree1.Insert(8.0);
+    BinTree1.Insert(4.5);
+
+    cout << "BinTree1:" << endl;
+    BinTree1.Display(cout);
+    cout << endl;
+
+    if(BinTree1.Empty())  cout << "BinTree1 is empty" << endl;
+    else                  cout << "BinTree1 is non-empty" << endl;
+
+    Value = 5.9;
+    if(BinTree1.Holds(Value))  cout << "BinTree1 holds " << Value << endl;
+    else                       cout << "BinTree1 does not hold " << Value << endl;
+
+    Value = 7.1;
+    if(BinTree1.Holds(Value))  cout << "BinTree1 holds " << Value << endl;
+    else                       cout << "BinTree1 does not hold " << Value << endl;
+
+    cout << "The minimum of BinTree1 is " << BinTree1.Minimum() << endl;
+    cout << "The maximum of BinTree1 is " << BinTree1.Maximum() << "\n" << endl;
+
+    cout << "Deleting elements 5.9, 0.2, 7.2, 8.0 and 9.2" << endl;
+    Continue(waitForKey);
+
+    BinTree1.Delete(5.9);
+    BinTree1.Delete(0.2);
+    BinTree1.Delete(7.2);
+    BinTree1.Delete(8.0);
+    BinTree1.Delete(9.2);
+    
+    cout << "BinTree1:" << endl;
+    BinTree1.Display(cout);
+    cout << endl;
+
+    cout << "Processing time required for building BinTree of " << n
+         << "\n randomly generated doubles" << endl;
+    Continue(waitForKey);
+    auto start = std::chrono::steady_clock::now();
+    srand((unsigned) time(NULL));
+
+    for(i = 0; i < n; i++)
+    {
+      Value = rand();
+      BinTree2.Insert(Value);
+    }
+
+    auto end = std::chrono::steady_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    cout << "Elapsed time for Building bintree (homemade): " << duration.count() << " ms\n";
+}
+
+void cyclicarray_test(bool waitForKey)
+{
+    Containers::CCyclicArray CyclicArray1(8);
+    Containers::CCyclicArray CyclicArray2(18);
+    deque<double> Deque1;
+    int i, N = 100000;
+
+    cout << "\nCYCLIC-ARRAY TEST:\n" << endl;
+
+    cout << "Pushing elements at the back.." << endl;
+    cout << "  CyclicArray1: " << CyclicArray1 << endl;
+    
+    for(i = 1; i <= 12; i++)
+    {
+        CyclicArray1.push_back(i);
+        cout << "  CyclicArray1: " << CyclicArray1 << endl;
+    }
+
+    Continue(waitForKey);
+
+    cout << "Popping elements from the back.." << endl;
+    for(i = 0; i < 6; i++)
+    {
+        CyclicArray1.pop_back();
+        cout << "  CyclicArray1: " << CyclicArray1 << endl;
+    }
+
+    Continue(waitForKey);
+
+    cout << "Pushing elements at the back.." << endl;
+    for(i = 7; i <= 8; i++)
+    {
+        CyclicArray1.push_back(i);
+        cout << "  CyclicArray1: " << CyclicArray1 << endl;
+    }
+
+    Continue(waitForKey);
+
+    cout << "Pushing elements at the front.." << endl;
+    for(i = 9; i < 21; i++)
+    {
+        CyclicArray1.push_front(i);
+        cout << "  CyclicArray1: " << CyclicArray1 << endl;
+    }
+
+    Continue(waitForKey);
+
+    cout << "Popping elements from the front.." << endl;
+    for(i = 0; i < 6; i++)
+    {
+        CyclicArray1.pop_front();
+        cout << "  CyclicArray1: " << CyclicArray1 << endl;
+    }
+
+    Continue(waitForKey);
+
+    cout << "Pushing elements at the front.." << endl;
+    for(i = 20; i <= 21; i++)
+    {
+        CyclicArray1.push_front(i);
+        cout << "  CyclicArray1: " << CyclicArray1 << endl;
+    }
+
+    Continue(waitForKey);
+
+    cout << "Pushing elements at the back.." << endl;
+    for(i = 22; i <= 23; i++)
+    {
+        CyclicArray1.push_back(i);
+        cout << "  CyclicArray1: " << CyclicArray1 << endl;
+    }
+
+    Continue(waitForKey);
+
+    cout << "Comparing processing times for pushing " << N
+        << "\nnumbers at the back of CyclicArray2\n" << endl;
+
+    auto start = std::chrono::steady_clock::now();
+
+    for(i = 0; i < N; i++)
+    {
+        CyclicArray2.push_back(3.0);
+    }
+
+    auto end = std::chrono::steady_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    cout << "CyclicArray: " << duration.count() << " ms\n";
+
+    for(i = 0; i < 18; i++)
+        Deque1.push_back(3);
+
+    start = std::chrono::steady_clock::now();
+
+    for(i = 0; i < N; i++)
+    {
+        Deque1.push_back(3);
+        Deque1.pop_front();
+    }
+
+    end = std::chrono::steady_clock::now();
+    duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    cout << "Deque: " << duration.count() << " ms\n";
+}
+
+void mxcifquadtree_test(bool waitForKey)
+{
+    int dx = 3;
+    int i, N = 10000;
+    int nNonIntersecting;
+
+    Containers::CRectangle Rectangle1(25, 25, 5, 5);
+    Containers::CRectangle Rectangle2(50, 6.25, 1, 1);
+    Containers::CRectangle Rectangle3(53.125, 12.5, 2.0, 2.0);
+    Containers::CRectangle Rectangle4(62.5, 12.5, 3.0, 3.0);
+    Containers::CRectangle Rectangle5(71.875, 12.5, 2.0, 2.0);
+    Containers::CRectangle Rectangle6(50.0, 37.5, 3.0, 3.0);
+    Containers::CRectangle Rectangle7(18.75, 50.0, 3.0, 3.0);
+    Containers::CRectangle Rectangle8(50.0, 50.0, 5.0, 5.0);
+    Containers::CRectangle Rectangle9(75.0, 50.0, 5.0, 5.0);
+    Containers::CRectangle Rectangle10(50.0, 75.0, 5.0, 5.0);
+    Containers::CRectangle Rectangle11(75.0, 75.0, 5.0, 5.0);
+    Containers::CRectangle Rectangle12(87.5, 93.75, 2.0, 2.0);
+    Containers::CRectangle RectangleQ(50.0, 75.0, 5.0, 5.0);
+
+    vector<Containers::CRectangle> Rectangles;
+    vector<Containers::CRectangle>::iterator it;
+    Containers::CMxCifQuadTree MxCifQuadTree1(Containers::CRectangle(50.0, 50.0, 50.0, 50.0));
+    Containers::CMxCifQuadTree MxCifQuadTree2(Containers::CRectangle(50.0, 50.0, 50.0, 50.0));
+    Containers::CMxCifQuadTree MxCifQuadTree3(Containers::CRectangle(50.0, 50.0, 50.0, 50.0));
+
+    cout << "\nMX-CIF QUADTREE TEST:\n" << endl;
+
+    cout << "Inserting a small number of rectangles in MxCifQuadTree1.." << endl; 
+    Continue(waitForKey);
+
+    MxCifQuadTree1.Insert(&Rectangle1);  
+    MxCifQuadTree1.Insert(&Rectangle2); 
+    MxCifQuadTree1.Insert(&Rectangle3); 
+    MxCifQuadTree1.Insert(&Rectangle4); 
+    MxCifQuadTree1.Insert(&Rectangle5); 
+    MxCifQuadTree1.Insert(&Rectangle6);  
+    MxCifQuadTree1.Insert(&Rectangle7);
+    MxCifQuadTree1.Insert(&Rectangle8);  
+    MxCifQuadTree1.Insert(&Rectangle9);  
+    MxCifQuadTree1.Insert(&Rectangle10);  
+    MxCifQuadTree1.Insert(&Rectangle11);  
+    MxCifQuadTree1.Insert(&Rectangle12);  
+
+    if(MxCifQuadTree1.Intersects(&RectangleQ))
+      cout << "RectangleQ intersects a number of rectangles in MxCifQuadTree1\n" << endl; 
+    else
+      cout << "RectangleQ does not intersect any rectangles in MxCifQuadTree1\n" << endl; 
+
+    cout << "Removing 3 rectangles from MxCifQuadTree1.." << endl;
+    Continue(waitForKey);
+
+    MxCifQuadTree1.Remove(&Rectangle3);
+    MxCifQuadTree1.Remove(&Rectangle4);
+    MxCifQuadTree1.Remove(&Rectangle5);
+
+    cout << "Clearing the rest of the rectangles from MxCifQuadTree1.." << endl;
+    Continue(waitForKey);
+
+    MxCifQuadTree1.Clear();
+
+    cout << "Generating " << N << " randomly positioned squares of size " 
+         << dx << "x" << dx << ".." << endl;
+    srand((unsigned) time(NULL));
+
+    for(i = 0; i < N; i++)
+    {
+        double Frac_x = ((double)rand()) / RAND_MAX;
+        double Frac_y = ((double)rand()) / RAND_MAX;
+
+        double Center_x = Frac_x * (100 - dx) + 0.5 * dx;
+        double Center_y = Frac_y * (100 - dx) + 0.5 * dx;
+
+        if(false)
+            cout << "(" << setiosflags(ios::fixed) << setprecision(2) << Center_x << ", " 
+                << setiosflags(ios::fixed) << setprecision(2) << Center_y << ")" << endl;
+
+        Rectangles.push_back(Containers::CRectangle(Center_x, Center_y, 0.5 * dx, 0.5 * dx));
+    }
+
+    cout << "\nAdding the " << N << " squares to MxCifQuadTree2" << endl; 
+    Continue(waitForKey);
+    auto start = std::chrono::steady_clock::now();
+    for(it = Rectangles.begin(); it != Rectangles.end(); it++)
+        MxCifQuadTree2.Insert(&(*it));
+
+    auto end = std::chrono::steady_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    cout << "Elapsed time for Building mxcif quad tree (homemade): " << duration.count() << " ms\n";
+
+    cout << "\nRemoving the same " << N << " squares from MxCifQuadTree2 one at a time" << endl; 
+    Continue(waitForKey);
+
+    start = std::chrono::steady_clock::now();
+    for(it = Rectangles.begin(); it != Rectangles.end(); it++)
+        MxCifQuadTree2.Remove(&(*it));
+    end = std::chrono::steady_clock::now();
+    duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    cout << "Elapsed time for deleting rectangles: " << duration.count() << " ms\n";
+
+    cout << "\nAdding the same " << N << " squares to MxCifQuadTree3" << endl; 
+    cout << "(but rejecting intersections this time)" << endl; 
+    Continue(waitForKey);
+
+    nNonIntersecting = 0;
+    start = std::chrono::steady_clock::now();
+    for(it = Rectangles.begin(); it != Rectangles.end(); it++)
+    {
+        if(!MxCifQuadTree3.Intersects(&(*it)))
+        {
+            MxCifQuadTree3.Insert(&(*it));
+            nNonIntersecting++;
+        }
+    }
+    end = std::chrono::steady_clock::now();
+    duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    cout << "Elapsed time for rejecting intersections: " << duration.count() << " ms\n";
+}
+
 int main()
 {
+    auto waitForKey = false;
+
     //do_various_tests();
-
-    heap_test();
-
-
+    //heap_test(waitForKey);
+    //bintree_test(waitForKey);
+    //cyclicarray_test(waitForKey);
+    mxcifquadtree_test(waitForKey);
     
     return 0;
 }
