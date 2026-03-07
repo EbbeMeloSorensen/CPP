@@ -2,6 +2,7 @@
 #include <MyStaticLib3/Calculator.h>
 #include <Containers/Heap.h>
 #include <Containers/BinTree.h>
+#include <Containers/CyclicArray.h>
 #include <Containers/MxCifQuadTree.h>
 
 // Dette projekt linker til de 2 hjemmelavede static link libraries vist ovenfor
@@ -11,6 +12,7 @@ int main()
     MyStaticLib3::Calculator calc;
     std::cout << "2 + 3 = " << calc.Add(2, 3) << std::endl;
 
+    // Fun with Heap
     Containers::CDoubleHeap heap1;
     heap1.Append(9.0);
     heap1.Append(13.0);
@@ -25,6 +27,7 @@ int main()
 
     std::cout << heap1[0] << std::endl;
 
+    // Fun with BinTree
     Containers::CBinTree binTree1;
     binTree1.Insert(9.0);
     binTree1.Insert(13.0);
@@ -32,6 +35,14 @@ int main()
 
     std::cout << "My BinTree:" << std::endl;
     binTree1.Display(std::cout);
+
+    // Fun with CyclicArray
+    Containers::CCyclicArray cyclicArray1(10);
+    cyclicArray1.push_back(9.0);
+    cyclicArray1.push_front(7.0);
+    cyclicArray1.push_back(13.0);
+
+    std::cout << "Size of cyclic array" << cyclicArray1.GetSize() << std::endl;
 
     // Fun with MxCifQuadTree
     Containers::CRectangle rectangle(0.0, 0.0, 10.0, 10.0);

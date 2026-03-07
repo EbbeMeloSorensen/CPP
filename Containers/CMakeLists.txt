@@ -7,8 +7,9 @@ include(FetchContent)
 # Library
 # -------------------------------------------------
 add_library(Containers STATIC
-    src/Heap.cpp
     src/BinTree.cpp
+    src/CyclicArray.cpp
+    src/Heap.cpp
     src/MxCifQuadTree.cpp
 )
 
