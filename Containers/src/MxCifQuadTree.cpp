@@ -352,147 +352,149 @@ namespace Containers
 
     void CMxCifQuadTree::Remove(CRectangle* pP)
     {
-        if(m_Root)
+        if (!m_Root)
         {
-            double      CX = m_P.m_cx;
-            double      CY = m_P.m_cy;
-            double      LX = m_P.m_lx;
-            double      LY = m_P.m_ly;
-            double      CV, LV;
-            CQuadNode*  T;
-            CQuadNode*  FT;
-            CQuadNode*  TT;
-            CQuadNode*  TEMPC;
-            CBinNode*   B;
-            CBinNode*   FB;
-            CBinNode*   TB;
-            CBinNode*   TEMPB;
-            AXIS        V;
-            QUADRANT    Q, QF;
-            DIRECTION   D, DF;
+            return;
+        }
 
-            T  = m_Root;
-            FT = NULL;
+        double      CX = m_P.m_cx;
+        double      CY = m_P.m_cy;
+        double      LX = m_P.m_lx;
+        double      LY = m_P.m_ly;
+        double      CV, LV;
+        CQuadNode*  T;
+        CQuadNode*  FT;
+        CQuadNode*  TT;
+        CQuadNode*  TEMPC;
+        CBinNode*   B;
+        CBinNode*   FB;
+        CBinNode*   TB;
+        CBinNode*   TEMPB;
+        AXIS        V;
+        QUADRANT    Q, QF;
+        DIRECTION   D, DF;
 
-            while(BIN_COMPARE(pP, CX, V = XA) != BOTH &&
-                BIN_COMPARE(pP, CY, V = YA) != BOTH)
+        T  = m_Root;
+        FT = NULL;
+
+        while(BIN_COMPARE(pP, CX, V = XA) != BOTH &&
+            BIN_COMPARE(pP, CY, V = YA) != BOTH)
+        {
+            Q = CIF_COMPARE(pP, CX, CY);
+
+            if(!T->m_Child[Q]) return;  // The rectangle is not in the tree
+
+            if(T->m_Axis[LEFT]        ||
+                T->m_Axis[RIGHT]      ||
+                T->m_Child[OPQUAD(Q)] ||
+                T->m_Child[CQUAD (Q)] ||
+                T->m_Child[CCQUAD(Q)])
             {
-                Q = CIF_COMPARE(pP, CX, CY);
-
-                if(!T->m_Child[Q]) return;  // The rectangle is not in the tree
-
-                if(T->m_Axis[LEFT]        ||
-                    T->m_Axis[RIGHT]      ||
-                    T->m_Child[OPQUAD(Q)] ||
-                    T->m_Child[CQUAD (Q)] ||
-                    T->m_Child[CCQUAD(Q)])
-                {
-                    FT = T;
-                    QF = Q;
-                }
-
-                T = T->m_Child[Q];
-                LX /= 2;
-                LY /= 2;
-                CX += LX * g_XF[Q];
-                CY += LY * g_YF[Q];
+                FT = T;
+                QF = Q;
             }
 
-            V  = OTHERAXIS(V);
-            B  = T->m_Axis[V];
-            FB = NULL;
+            T = T->m_Child[Q];
+            LX /= 2;
+            LY /= 2;
+            CX += LX * g_XF[Q];
+            CY += LY * g_YF[Q];
+        }
 
-            if(V == XA)
+        V  = OTHERAXIS(V);
+        B  = T->m_Axis[V];
+        FB = NULL;
+
+        if(V == XA)
+        {
+            CV = CX;
+            LV = LX;
+        }
+        else{
+            CV = CY;
+            LV = LY;
+        }
+
+        D = BIN_COMPARE(pP, CV, V);
+
+        while(B && D != BOTH)
+        {
+            if(B->m_Child[OPDIR(D)] || !B->m_Rectangles.empty())
             {
-                CV = CX;
-                LV = LX;
-            }
-            else{
-                CV = CY;
-                LV = LY;
+                FB = B;
+                DF = D;
             }
 
+            B = B->m_Child[D];
+            LV /= 2;
+            CV += LV * g_VF[D];
             D = BIN_COMPARE(pP, CV, V);
+        }
 
-            while(B && D != BOTH)
+        if(!B || !B->Holds(pP)) 
+        {
+            return;                                    // The rectangle is not in the tree
+        }
+        else if(B->m_Child[LEFT] || B->m_Child[RIGHT] || B->GetSize() > 1)
+        {
+            B->Remove(pP);                             // No collapsing is possible
+        }
+        else
+        {
+            // Attempt to collapse BinNodes
+            TB = FB ? FB->m_Child[DF] : T->m_Axis[V];  // Get a link to the oldest dismissable BinNode
+
+            D = LEFT;                                  // Initialize direction variable for scanning
+            while(TB != B)                             // Destroy BinNodes
             {
-                if(B->m_Child[OPDIR(D)] || !B->m_Rectangles.empty())
+                if(!TB->m_Child[D])                      // Determine the direction to the BinNode child
+                D = OPDIR(D);                          //
+
+                TEMPB = TB->m_Child[D];
+                TB->m_Child[D] = NULL;                   // Detach in order to avoid premature destruction of children
+                delete TB;
+                TB = TEMPB;
+            }
+
+            delete B;
+
+            if(FB)
+                FB->m_Child[DF] = NULL;                  // Set pointer to oldest destroyed BinNode to NULL
+            else                                       //
+            {                                          //
+                T->m_Axis[V] = NULL;                     // 
+
+                if(T->m_Axis[OTHERAXIS(V)] ||
+                T->m_Child[0]           || 
+                T->m_Child[1]           ||
+                T->m_Child[2]           ||
+                T->m_Child[3])
+                return;                                // No further collapsing is possible
+                                                        // BEMAERK AT BOGEN IKKE HAR KRITERIET OM CHILDREN QUADNODES MED
+                                                        // DET MAA VEL VAERE EN FEJL (det er jo helt parallelt til hvad
+                                                        // der foregaar under kollaps af bintraeet)
+
+                // Attempt to collapse QuadNodes
+                TT = FT ? FT->m_Child[QF] : m_Root;      // Get a link to the oldest dismissable QuadNode
+
+                Q = NW;                                  // Initialize quadrant variable for scanning
+                while(TT != T)                           // Destroy QuadNodes
                 {
-                    FB = B;
-                    DF = D;
+                while(!TT->m_Child[Q])                 // Determine the direction to the QuadNode child
+                    Q = CQUAD(Q);                        //
+
+                TEMPC = TT->m_Child[Q];                // Get a link to the QuadNode child for the next iteration
+                TT->m_Child[Q] = NULL;                 // Detach in order to avoid premature destruction of children
+                delete TT;                             // Destroy the QuadNode
+                TT = TEMPC;                            // Proceed to the QuadNode child
                 }
 
-                B = B->m_Child[D];
-                LV /= 2;
-                CV += LV * g_VF[D];
-                D = BIN_COMPARE(pP, CV, V);
-            }
+                delete T;                                // Destroy the QuadNode
 
-            if(!B || !B->Holds(pP)) 
-            {
-                return;                                    // The rectangle is not in the tree
-            }
-            else if(B->m_Child[LEFT] || B->m_Child[RIGHT] || B->GetSize() > 1)
-            {
-                B->Remove(pP);                             // No collapsing is possible
-            }
-            else
-            {
-                // Attempt to collapse BinNodes
-                TB = FB ? FB->m_Child[DF] : T->m_Axis[V];  // Get a link to the oldest dismissable BinNode
-
-                D = LEFT;                                  // Initialize direction variable for scanning
-                while(TB != B)                             // Destroy BinNodes
-                {
-                    if(!TB->m_Child[D])                      // Determine the direction to the BinNode child
-                    D = OPDIR(D);                          //
-
-                    TEMPB = TB->m_Child[D];
-                    TB->m_Child[D] = NULL;                   // Detach in order to avoid premature destruction of children
-                    delete TB;
-                    TB = TEMPB;
-                }
-
-                delete B;
-
-                if(FB)
-                    FB->m_Child[DF] = NULL;                  // Set pointer to oldest destroyed BinNode to NULL
-                else                                       //
-                {                                          //
-                    T->m_Axis[V] = NULL;                     // 
-
-                    if(T->m_Axis[OTHERAXIS(V)] ||
-                    T->m_Child[0]           || 
-                    T->m_Child[1]           ||
-                    T->m_Child[2]           ||
-                    T->m_Child[3])
-                    return;                                // No further collapsing is possible
-                                                            // BEMAERK AT BOGEN IKKE HAR KRITERIET OM CHILDREN QUADNODES MED
-                                                            // DET MAA VEL VAERE EN FEJL (det er jo helt parallelt til hvad
-                                                            // der foregaar under kollaps af bintraeet)
-
-                    // Attempt to collapse QuadNodes
-                    TT = FT ? FT->m_Child[QF] : m_Root;      // Get a link to the oldest dismissable QuadNode
-
-                    Q = NW;                                  // Initialize quadrant variable for scanning
-                    while(TT != T)                           // Destroy QuadNodes
-                    {
-                    while(!TT->m_Child[Q])                 // Determine the direction to the QuadNode child
-                        Q = CQUAD(Q);                        //
-
-                    TEMPC = TT->m_Child[Q];                // Get a link to the QuadNode child for the next iteration
-                    TT->m_Child[Q] = NULL;                 // Detach in order to avoid premature destruction of children
-                    delete TT;                             // Destroy the QuadNode
-                    TT = TEMPC;                            // Proceed to the QuadNode child
-                    }
-
-                    delete T;                                // Destroy the QuadNode
-
-                    if(FT)                                   // Set pointer to oldest destroyed QuadNode to NULL
-                    FT->m_Child[QF] = NULL;                //
-                    else                                     //
-                    m_Root = NULL;                         //
-                }
+                if(FT)                                   // Set pointer to oldest destroyed QuadNode to NULL
+                FT->m_Child[QF] = NULL;                //
+                else                                     //
+                m_Root = NULL;                         //
             }
         }
     }
