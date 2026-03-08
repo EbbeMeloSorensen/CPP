@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 #include "Containers/MxCifQuadTree.h"
 
 using namespace std;
@@ -141,6 +142,17 @@ namespace Containers
     AXIS OTHERAXIS(const AXIS V)
     {
         return V == XA ? YA : XA;
+    }
+
+    string QuadrantToString(QUADRANT quadrant)
+    {
+        switch(quadrant)
+        {
+            case NW: { return "NW"; break; }
+            case NE: { return "NE"; break; }
+            case SW: { return "SW"; break; }
+            default: { return "SE"; break; }
+        }
     }
 
     // Classes
@@ -335,7 +347,10 @@ namespace Containers
 
     void CMxCifQuadTree::Insert(CRectangle* pP)
     {
-        Log("Inserting rectangle..");
+        string message = "Inserting rectangle: (Cx, CY) = (";
+        message += std::to_string(pP->GetCenterX()) + ", " + std::to_string(pP->GetCenterY()) + ")";
+        message += ", (W, H) = (" + std::to_string(pP->GetHalfWidth() * 2) + ", " + std::to_string(pP->GetHalfHeight() * 2) + ")";
+        Log(message);
 
         CQuadNode*  pQuadNode;
         DIRECTION   DX, DY;
@@ -354,8 +369,12 @@ namespace Containers
         DX = BIN_COMPARE(pP, CX, XA);
         DY = BIN_COMPARE(pP, CY, YA);
 
+        int quadNodeLevel = 1;
+
         while(DX != BOTH && DY != BOTH)
         {
+            string message = "  No intersection at quad node level " + to_string(quadNodeLevel) + " => ";
+
             Q = CIF_COMPARE(pP, CX, CY);
 
             if(!pQuadNode->m_Child[Q])
@@ -364,20 +383,30 @@ namespace Containers
             }
 
             pQuadNode = pQuadNode->m_Child[Q];
+            quadNodeLevel++;
 
             LX /= 2;
             LY /= 2;
             CX += LX * g_XF[Q];
             CY += LY * g_YF[Q];
 
+            message += "Navigating to the ";
+            message += QuadrantToString(Q);
+            message += ", where quad node is centered at (x, y) = (" + to_string(CX) + ", " + to_string(CY) + ")";
+            Log(message);
+
             DX = BIN_COMPARE(pP, CX, XA);
             DY = BIN_COMPARE(pP, CY, YA);
         }
 
         if(DX == BOTH)
+        {
             pQuadNode->InsertOnAxis(pP, CY, LY, YA);
+        }
         else
+        {
             pQuadNode->InsertOnAxis(pP, CX, LX, XA);
+        }
     }
 
     void CMxCifQuadTree::Remove(CRectangle* pP)
