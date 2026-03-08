@@ -54,6 +54,7 @@ namespace Containers
 
     friend QUADRANT  CIF_COMPARE(CRectangle*, const double, const double);
     friend DIRECTION BIN_COMPARE(CRectangle*, const double, const AXIS);
+    friend std::ostream& operator<<(std::ostream& out, CRectangle& rect);
 
     friend class CMxCifQuadTree;
     };

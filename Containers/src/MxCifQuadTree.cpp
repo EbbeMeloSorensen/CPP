@@ -1,3 +1,4 @@
+#include <iostream>
 #include "Containers/MxCifQuadTree.h"
 
 using namespace std;
@@ -222,6 +223,23 @@ namespace Containers
         }
 
         return false;
+    }
+
+    std::ostream& operator<<(ostream& out, CRectangle& rect)
+    {
+        // out << "(";
+        // int index = 0;
+        // if(index < ca.m_Size) 
+        // {
+        //     out << ca[index++];
+        //     while(index < ca.m_Size)
+        //     out << ", " << ca[index++];
+        // }
+        // out << ")";
+
+        out << "Bamse";
+
+        return out;
     }
 
     CBinNode::CBinNode()

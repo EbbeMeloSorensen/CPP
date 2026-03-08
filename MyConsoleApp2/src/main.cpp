@@ -23,6 +23,24 @@
 
 using namespace std;
 
+ostream& outputInSVGFormat(
+    ostream& out,
+    double centerX,
+    double centerY,
+    double width,
+    double height,
+    double magnification)
+{
+    out << "  <rect";
+    out << " width=\"" << width * magnification << "\"";
+    out << " height=\"" << height * magnification << "\"";
+    out << " x=\"" << (centerX - width / 2) * magnification << "\"";
+    out << " y=\"" << (centerY - height / 2) * magnification << "\"";
+    out << " />" << endl;
+
+    return out;
+}
+
 void Continue(bool waitForKey = false)
 {
     if(waitForKey)
@@ -403,7 +421,7 @@ void mxcifquadtree_test(bool waitForKey)
     MxCifQuadTree1.Insert(&Rectangle9);  
     MxCifQuadTree1.Insert(&Rectangle10);  
     MxCifQuadTree1.Insert(&Rectangle11);  
-    MxCifQuadTree1.Insert(&Rectangle12);  
+    MxCifQuadTree1.Insert(&Rectangle12);
 
     if(MxCifQuadTree1.Intersects(&RectangleQ))
       cout << "RectangleQ intersects a number of rectangles in MxCifQuadTree1\n" << endl; 
@@ -485,12 +503,16 @@ void mxcifquadtree_test(bool waitForKey)
             auto width = it->GetWidth();
             auto height = it->GetHeight();
 
+            outputInSVGFormat(file, width, height, centerX, centerY, magnification);
+
             file << "  <rect";
             file << " width=\"" << width * magnification << "\"";
             file << " height=\"" << height * magnification << "\"";
             file << " x=\"" << (centerX - width / 2) * magnification << "\"";
             file << " y=\"" << (centerY - height / 2) * magnification << "\"";
             file << " />" << endl;
+
+            break;
         }
     }
     
