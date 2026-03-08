@@ -56,8 +56,10 @@ namespace Containers
             return false;
 
         // Does the rectangle intersect any rectangles in any of the two bintrees of the quadnode?
-        if(CROSS_AXIS(pP, pQ->m_Axis[YA], CY, LY, YA) ||
-            CROSS_AXIS(pP, pQ->m_Axis[XA], CX, LX, XA))
+        if(CROSS_AXIS(pP, pQ->m_Axis[YA], CY, LY, YA))
+            return true;
+
+        if(CROSS_AXIS(pP, pQ->m_Axis[XA], CX, LX, XA))
             return true;
 
         LX /= 2;
@@ -174,12 +176,12 @@ namespace Containers
         return m_cy;
     }
 
-    double CRectangle::GetWidth() const
+    double CRectangle::GetHalfWidth() const
     {
         return m_lx;
     }
 
-    double CRectangle::GetHeight() const
+    double CRectangle::GetHalfHeight() const
     {
         return m_ly;
     }

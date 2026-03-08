@@ -41,8 +41,8 @@ namespace Containers
 
         double GetCenterX() const;
         double GetCenterY() const;
-        double GetWidth() const;
-        double GetHeight() const;
+        double GetHalfWidth() const;
+        double GetHalfHeight() const;
 
         CRectangle& operator= (const CRectangle& P);
 

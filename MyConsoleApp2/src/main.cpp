@@ -28,14 +28,13 @@ ostream& outputInSVGFormat(
     double centerX,
     double centerY,
     double width,
-    double height,
-    double magnification)
+    double height)
 {
     out << "  <rect";
-    out << " width=\"" << width * magnification << "\"";
-    out << " height=\"" << height * magnification << "\"";
-    out << " x=\"" << (centerX - width / 2) * magnification << "\"";
-    out << " y=\"" << (centerY - height / 2) * magnification << "\"";
+    out << " width=\"" << width << "\"";
+    out << " height=\"" << height  << "\"";
+    out << " x=\"" << (centerX - width / 2) << "\"";
+    out << " y=\"" << (centerY - height / 2) << "\"";
     out << " />" << endl;
 
     return out;
@@ -381,7 +380,7 @@ void cyclicarray_test(bool waitForKey)
 
 void mxcifquadtree_test(bool waitForKey)
 {
-    int dx = 3;
+    double squareSize = 10.0;
     int i, N = 10000;
     int nNonIntersecting;
 
@@ -441,22 +440,28 @@ void mxcifquadtree_test(bool waitForKey)
     MxCifQuadTree1.Clear();
 
     cout << "Generating " << N << " randomly positioned squares of size " 
-         << dx << "x" << dx << ".." << endl;
-    srand((unsigned) time(NULL));
+         << squareSize << "x" << squareSize << ".." << endl;
+
+    //srand((unsigned) time(NULL)); // seeded with time => random numbers
+    srand(0); // seeded with 0 => pseudo random numbers
 
     for(i = 0; i < N; i++)
     {
         double Frac_x = ((double)rand()) / RAND_MAX;
         double Frac_y = ((double)rand()) / RAND_MAX;
 
-        double Center_x = Frac_x * (100 - dx) + 0.5 * dx;
-        double Center_y = Frac_y * (100 - dx) + 0.5 * dx;
+        double Center_x = Frac_x * (100 - squareSize) + 0.5 * squareSize;
+        double Center_y = Frac_y * (100 - squareSize) + 0.5 * squareSize;
+
+        // Round to integer, in order to ease debugging
+        Center_x = round(Center_x);
+        Center_y = round(Center_y);
 
         if(false)
             cout << "(" << setiosflags(ios::fixed) << setprecision(2) << Center_x << ", " 
                 << setiosflags(ios::fixed) << setprecision(2) << Center_y << ")" << endl;
 
-        Rectangles.push_back(Containers::CRectangle(Center_x, Center_y, 0.5 * dx, 0.5 * dx));
+        Rectangles.push_back(Containers::CRectangle(Center_x, Center_y, squareSize * 0.5, squareSize * 0.5));
     }
 
     cout << "\nAdding the " << N << " squares to MxCifQuadTree2" << endl; 
@@ -483,45 +488,83 @@ void mxcifquadtree_test(bool waitForKey)
     cout << "(but rejecting intersections this time)" << endl; 
     Continue(waitForKey);
 
-    ofstream file("mxcifquadtree3.svg");
+    ofstream geometryFile("mxcifquadtree3.svg");
+    ofstream logFile("mxcifquadtree3_log.txt");
+    ofstream allRectanglesFile("all_rectangles.txt");
 
-    auto magnification = 8.0;
+    auto magnification = 1.0;
 
-    file << "<svg width=\"" << 1000 * magnification << "\" height=\"" << 1000 * magnification << "\" xmlns=\"http://www.w3.org/2000/svg\">" << endl;
+    geometryFile << "<svg width=\"" << 100 * magnification << "\" height=\"" << 100 * magnification << "\" xmlns=\"http://www.w3.org/2000/svg\">" << endl;
 
     nNonIntersecting = 0;
     start = std::chrono::steady_clock::now();
+    auto count = 0;
     for(it = Rectangles.begin(); it != Rectangles.end(); it++)
     {
+        auto centerX = it->GetCenterX();
+        auto centerY = it->GetCenterY();
+        auto halfWidth = it->GetHalfWidth();
+        auto halfHeight = it->GetHalfHeight();
+
+        allRectanglesFile << centerX << ", " << centerY << ", " << halfWidth << ", " << halfHeight;
+
         if(!MxCifQuadTree3.Intersects(&(*it)))
         {
+            allRectanglesFile << ", 1"; // (accepted, i.e. not intersectiong)
+
             MxCifQuadTree3.Insert(&(*it));
             nNonIntersecting++;
 
-            auto centerX = it->GetCenterX();
-            auto centerY = it->GetCenterY();
-            auto width = it->GetWidth();
-            auto height = it->GetHeight();
+            logFile << "Inserting " << squareSize << "x" << squareSize << " rectangle with center (x, y) = (";
+            logFile << centerX << ", " << centerY << ")" << endl;
 
-            outputInSVGFormat(file, width, height, centerX, centerY, magnification);
+            // doesn't work..
+            //outputInSVGFormat(file, width, height, centerX, centerY);
 
-            file << "  <rect";
-            file << " width=\"" << width * magnification << "\"";
-            file << " height=\"" << height * magnification << "\"";
-            file << " x=\"" << (centerX - width / 2) * magnification << "\"";
-            file << " y=\"" << (centerY - height / 2) * magnification << "\"";
-            file << " />" << endl;
-
-            break;
+            geometryFile << "  <rect";
+            geometryFile << " width=\"" << halfWidth * 2 << "\"";
+            geometryFile << " height=\"" << halfHeight * 2 << "\"";
+            geometryFile << " x=\"" << (centerX - halfWidth) << "\"";
+            geometryFile << " y=\"" << (centerY - halfHeight) << "\"";
+            geometryFile << " />" << endl;
         }
+        else
+        {
+            allRectanglesFile << ", 0"; // (rejected due to intersection)
+
+            logFile << "  Rejecting " << squareSize << "x" << squareSize << " rectangle with center (x, y) = (";
+            logFile << centerX << ", " << centerY << ")" << endl;
+
+            if (false)
+            {
+                geometryFile << "  <rect";
+                geometryFile << " width=\"" << halfWidth * 2 << "\"";
+                geometryFile << " height=\"" << halfHeight * 2 << "\"";
+                geometryFile << " x=\"" << (centerX - halfWidth) << "\"";
+                geometryFile << " y=\"" << (centerY - halfHeight) << "\"";
+                geometryFile << " fill=\"red\"";
+                geometryFile << " />" << endl;
+            }
+
+            // Step in and see what goes wrong..
+            //MxCifQuadTree3.Intersects(&(*it));
+
+            //break;
+        }
+
+        allRectanglesFile << endl;
+
+        count++;
     }
     
     end = std::chrono::steady_clock::now();
     duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
     cout << "Elapsed time for rejecting intersections: " << duration.count() << " ms\n";
 
-    file << "</svg>" << endl;
-    file.close();
+    geometryFile << "</svg>" << endl;
+    geometryFile.close();
+    logFile.close();
+    allRectanglesFile.close();
 }
 
 int main()
