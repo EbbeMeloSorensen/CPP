@@ -1,5 +1,6 @@
 #include <list>
 #include <vector>
+#include <iostream>
 
 namespace Containers
 {
@@ -102,7 +103,7 @@ namespace Containers
     class CMxCifQuadTree
     {
     public:
-        CMxCifQuadTree(const CRectangle& P);
+        CMxCifQuadTree(const CRectangle& P, std::ostream* pLog);
         ~CMxCifQuadTree();
 
         void Insert     (CRectangle* pP);
@@ -112,7 +113,11 @@ namespace Containers
         void Clear();
 
     private:
-        CRectangle  m_P;
-        CQuadNode*  m_Root;
+        void Log(std::string message);
+
+    private:
+        CRectangle m_P;
+        CQuadNode* m_Root;
+        std::ostream* m_pLog;
     };
 }

@@ -400,9 +400,12 @@ void mxcifquadtree_test(bool waitForKey)
 
     vector<Containers::CRectangle> Rectangles;
     vector<Containers::CRectangle>::iterator it;
-    Containers::CMxCifQuadTree MxCifQuadTree1(Containers::CRectangle(50.0, 50.0, 50.0, 50.0));
-    Containers::CMxCifQuadTree MxCifQuadTree2(Containers::CRectangle(50.0, 50.0, 50.0, 50.0));
-    Containers::CMxCifQuadTree MxCifQuadTree3(Containers::CRectangle(50.0, 50.0, 50.0, 50.0));
+    Containers::CMxCifQuadTree MxCifQuadTree1(Containers::CRectangle(50.0, 50.0, 50.0, 50.0), NULL);
+    Containers::CMxCifQuadTree MxCifQuadTree2(Containers::CRectangle(50.0, 50.0, 50.0, 50.0), NULL);
+
+    ofstream logFile1("log.txt");
+
+    Containers::CMxCifQuadTree MxCifQuadTree3(Containers::CRectangle(50.0, 50.0, 50.0, 50.0), &logFile1);
 
     cout << "\nMX-CIF QUADTREE TEST:\n" << endl;
 

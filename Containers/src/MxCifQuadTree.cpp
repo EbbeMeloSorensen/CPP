@@ -319,10 +319,13 @@ namespace Containers
         pBinNode->Insert(pP);
     }
 
-    CMxCifQuadTree::CMxCifQuadTree(const CRectangle& P)
+    CMxCifQuadTree::CMxCifQuadTree(const CRectangle& P, std::ostream* pLog)
     {
         m_P    = P;
         m_Root = NULL;
+        m_pLog = pLog;
+
+        Log("Instantiating CMxCifQuadTree");
     }
 
     CMxCifQuadTree::~CMxCifQuadTree()
@@ -332,6 +335,8 @@ namespace Containers
 
     void CMxCifQuadTree::Insert(CRectangle* pP)
     {
+        Log("Inserting rectangle..");
+
         CQuadNode*  pQuadNode;
         DIRECTION   DX, DY;
         QUADRANT    Q;
@@ -341,9 +346,11 @@ namespace Containers
         double      LY = m_P.m_ly;
 
         if(!m_Root)
+        {
             m_Root = new CQuadNode;
+        }
 
-        pQuadNode = m_Root;
+        pQuadNode = m_Root; // Vi dribler ned ad quad nodes i træet indtil vi finder en, hvorom der gælder, at det "kryds", der udfylder den
         DX = BIN_COMPARE(pP, CX, XA);
         DY = BIN_COMPARE(pP, CY, YA);
 
@@ -352,9 +359,12 @@ namespace Containers
             Q = CIF_COMPARE(pP, CX, CY);
 
             if(!pQuadNode->m_Child[Q])
-            pQuadNode->m_Child[Q] = new CQuadNode;
+            {
+                pQuadNode->m_Child[Q] = new CQuadNode;
+            }
 
             pQuadNode = pQuadNode->m_Child[Q];
+
             LX /= 2;
             LY /= 2;
             CX += LX * g_XF[Q];
@@ -533,6 +543,14 @@ namespace Containers
         {
             delete m_Root;
             m_Root = NULL;
+        }
+    }
+
+    void CMxCifQuadTree::Log(std::string message)
+    {
+        if (m_pLog)
+        {
+            *m_pLog << message << endl;
         }
     }
 }
