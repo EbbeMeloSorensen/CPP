@@ -389,8 +389,8 @@ namespace Containers
     void CMxCifQuadTree::Insert(CRectangle* pP)
     {
         string message = "Inserting rectangle: (Cx, Cy) = (";
-        message += std::to_string(pP->GetCenterX()) + ", " + std::to_string(pP->GetCenterY()) + ")";
-        message += ", (W, H) = (" + std::to_string(pP->GetHalfWidth() * 2) + ", " + std::to_string(pP->GetHalfHeight() * 2) + ")";
+        message += std::to_string((int)pP->GetCenterX()) + ", " + std::to_string((int)pP->GetCenterY()) + ")";
+        message += ", (W, H) = (" + std::to_string((int)pP->GetHalfWidth() * 2) + ", " + std::to_string((int)pP->GetHalfHeight() * 2) + ")";
         Log(message);
 
         CQuadNode*  pQuadNode;
@@ -447,7 +447,7 @@ namespace Containers
         }
         else
         {
-            Log("    Intersection with Y axis on quad level " + to_string(quadNodeLevel));
+            Log("    Intersection with y axis on quad level " + to_string(quadNodeLevel));
             pQuadNode->InsertOnAxis(pP, CX, LX, XA);
         }
     }
