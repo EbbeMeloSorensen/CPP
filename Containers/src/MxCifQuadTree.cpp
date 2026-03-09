@@ -155,6 +155,16 @@ namespace Containers
         }
     }
 
+    string DirectionToString(DIRECTION direction)
+    {
+        switch(direction)
+        {
+            case LEFT: { return "LEFT"; break; }
+            case RIGHT: { return "RIGHT"; break; }
+            default: { return "BOTH"; break; }
+        }
+    }
+
     // Classes
 
     // Constructor
@@ -287,10 +297,11 @@ namespace Containers
         return m_Rectangles.size();
     }
 
-    CQuadNode::CQuadNode()
+    CQuadNode::CQuadNode(std::ostream* pLog)
     {
         m_Axis[0] = m_Axis[1] = NULL;
         m_Child[NW] = m_Child[NE] = m_Child[SW] = m_Child[SE] = NULL;
+        m_pLog = pLog;
     }
 
     CQuadNode::~CQuadNode()
@@ -312,23 +323,53 @@ namespace Containers
         DIRECTION  D;
 
         if(!m_Axis[V])
+        {
             m_Axis[V] = new CBinNode;
+        }
 
         pBinNode = m_Axis[V];
         D = BIN_COMPARE(pP, CV, V);
 
+        int binNodeLevel = 1;
+
         while(D != BOTH)
         {
+            string message = "      No intersection at bin node level " + to_string(binNodeLevel) + " => ";
+
             if(!pBinNode->m_Child[D])
-            pBinNode->m_Child[D] = new CBinNode;
+            {
+                pBinNode->m_Child[D] = new CBinNode;
+            }
 
             pBinNode = pBinNode->m_Child[D];
+            binNodeLevel++;
+
             LV /= 2;
             CV += LV * g_VF[D];
+
+            message += "Navigating to the ";
+            message += DirectionToString(D);
+            message += ", where bin node is centered at x = " + to_string(CV);
+            Log(message);
+
             D = BIN_COMPARE(pP, CV, V);
         }
 
+        string message = "        Intersection at bin node level ";
+        message += to_string(binNodeLevel);
+        message += " => inserting rectangle in bin node";
+
+        Log(message);
+
         pBinNode->Insert(pP);
+    }
+
+    void CQuadNode::Log(std::string message)
+    {
+        if (m_pLog)
+        {
+            *m_pLog << message << endl;
+        }
     }
 
     CMxCifQuadTree::CMxCifQuadTree(const CRectangle& P, std::ostream* pLog)
@@ -347,7 +388,7 @@ namespace Containers
 
     void CMxCifQuadTree::Insert(CRectangle* pP)
     {
-        string message = "Inserting rectangle: (Cx, CY) = (";
+        string message = "Inserting rectangle: (Cx, Cy) = (";
         message += std::to_string(pP->GetCenterX()) + ", " + std::to_string(pP->GetCenterY()) + ")";
         message += ", (W, H) = (" + std::to_string(pP->GetHalfWidth() * 2) + ", " + std::to_string(pP->GetHalfHeight() * 2) + ")";
         Log(message);
@@ -362,7 +403,7 @@ namespace Containers
 
         if(!m_Root)
         {
-            m_Root = new CQuadNode;
+            m_Root = new CQuadNode(m_pLog);
         }
 
         pQuadNode = m_Root; // Vi dribler ned ad quad nodes i træet indtil vi finder en, hvorom der gælder, at det "kryds", der udfylder den
@@ -379,7 +420,7 @@ namespace Containers
 
             if(!pQuadNode->m_Child[Q])
             {
-                pQuadNode->m_Child[Q] = new CQuadNode;
+                pQuadNode->m_Child[Q] = new CQuadNode(m_pLog);
             }
 
             pQuadNode = pQuadNode->m_Child[Q];
@@ -401,10 +442,12 @@ namespace Containers
 
         if(DX == BOTH)
         {
+            Log("    Intersection with x axis on quad level " + to_string(quadNodeLevel));
             pQuadNode->InsertOnAxis(pP, CY, LY, YA);
         }
         else
         {
+            Log("    Intersection with Y axis on quad level " + to_string(quadNodeLevel));
             pQuadNode->InsertOnAxis(pP, CX, LX, XA);
         }
     }

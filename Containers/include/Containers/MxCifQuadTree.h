@@ -85,14 +85,16 @@ namespace Containers
     class CQuadNode
     {
     private:
-        CQuadNode();
+        CQuadNode(std::ostream* pLog);
         ~CQuadNode();
 
         void InsertOnAxis(CRectangle* pP, double CV, double LV, AXIS V);
+        void Log(std::string message);
 
         CBinNode*   m_Axis[2];
         CQuadNode*  m_Child[4];
-
+        std::ostream* m_pLog;
+ 
     friend bool CIF_SEARCH(CRectangle*, CQuadNode*, 
                             const double, const double,
                             double, double);
