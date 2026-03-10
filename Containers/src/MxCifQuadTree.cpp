@@ -66,10 +66,16 @@ namespace Containers
         LX /= 2;
         LY /= 2;
 
-        if(CIF_SEARCH(pP, pQ->m_Child[NW], CX + g_XF[NW] * LX, CY + g_YF[NW] * LY, LX, LY) ||
-            CIF_SEARCH(pP, pQ->m_Child[NE], CX + g_XF[NE] * LX, CY + g_YF[NE] * LY, LX, LY) ||
-            CIF_SEARCH(pP, pQ->m_Child[SW], CX + g_XF[SW] * LX, CY + g_YF[SW] * LY, LX, LY) ||
-            CIF_SEARCH(pP, pQ->m_Child[SE], CX + g_XF[SE] * LX, CY + g_YF[SE] * LY, LX, LY))
+        if(CIF_SEARCH(pP, pQ->m_Child[NW], CX + g_XF[NW] * LX, CY + g_YF[NW] * LY, LX, LY))
+            return true;
+
+        if(CIF_SEARCH(pP, pQ->m_Child[NE], CX + g_XF[NE] * LX, CY + g_YF[NE] * LY, LX, LY))
+            return true;
+
+        if(CIF_SEARCH(pP, pQ->m_Child[SW], CX + g_XF[SW] * LX, CY + g_YF[SW] * LY, LX, LY))
+            return true;
+
+        if(CIF_SEARCH(pP, pQ->m_Child[SE], CX + g_XF[SE] * LX, CY + g_YF[SE] * LY, LX, LY))
             return true;
 
         return false;
@@ -606,7 +612,18 @@ namespace Containers
         if(!m_Root)
             return false;
 
-        return CIF_SEARCH(pP, m_Root, m_P.m_cx, m_P.m_cy, m_P.m_lx, m_P.m_ly);
+        bool intersection = CIF_SEARCH(pP, m_Root, m_P.m_cx, m_P.m_cy, m_P.m_lx, m_P.m_ly);
+
+        if (m_pLog && intersection)
+        {
+            string message = "Rectangle: (Cx, Cy) = (";
+            message += std::to_string((int)pP->GetCenterX()) + ", " + std::to_string((int)pP->GetCenterY()) + ")";
+            message += ", (W, H) = (" + std::to_string((int)pP->GetHalfWidth() * 2) + ", " + std::to_string((int)pP->GetHalfHeight() * 2) + ")";
+            message += " intersects existing rectangles and is therefore rejected";
+            Log(message);
+        }
+
+        return intersection;
     }
 
     void CMxCifQuadTree::Clear()

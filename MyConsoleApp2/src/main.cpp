@@ -521,9 +521,6 @@ void mxcifquadtree_test(bool waitForKey)
             logFile << "Inserting " << squareSize << "x" << squareSize << " rectangle with center (x, y) = (";
             logFile << centerX << ", " << centerY << ")" << endl;
 
-            // doesn't work..
-            //outputInSVGFormat(file, width, height, centerX, centerY);
-
             geometryFile << "  <rect";
             geometryFile << " width=\"" << halfWidth * 2 << "\"";
             geometryFile << " height=\"" << halfHeight * 2 << "\"";
