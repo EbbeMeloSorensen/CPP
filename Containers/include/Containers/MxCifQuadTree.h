@@ -112,6 +112,8 @@ namespace Containers
         void Remove     (CRectangle* pP);
         bool Intersects (CRectangle* pP);
 
+        void GetAllOverlapping(CRectangle* pP);
+
         void Clear();
 
     private:

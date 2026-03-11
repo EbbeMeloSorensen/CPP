@@ -567,18 +567,20 @@ namespace Containers
             delete B;
 
             if(FB)
+            {
                 FB->m_Child[DF] = NULL;                  // Set pointer to oldest destroyed BinNode to NULL
-            else                                       //
-            {                                          //
-                T->m_Axis[V] = NULL;                     // 
+            }
+            else
+            {
+                T->m_Axis[V] = NULL;
 
                 if(T->m_Axis[OTHERAXIS(V)] ||
-                T->m_Child[0]           || 
-                T->m_Child[1]           ||
-                T->m_Child[2]           ||
-                T->m_Child[3])
+                    T->m_Child[0]           || 
+                    T->m_Child[1]           ||
+                    T->m_Child[2]           ||
+                    T->m_Child[3])
                 return;                                // No further collapsing is possible
-                                                        // BEMAERK AT BOGEN IKKE HAR KRITERIET OM CHILDREN QUADNODES MED
+                                                        // BEMAERK AT BOGEN (2026 - hvad for en bog?) IKKE HAR KRITERIET OM CHILDREN QUADNODES MED
                                                         // DET MAA VEL VAERE EN FEJL (det er jo helt parallelt til hvad
                                                         // der foregaar under kollaps af bintraeet)
 
@@ -586,25 +588,37 @@ namespace Containers
                 TT = FT ? FT->m_Child[QF] : m_Root;      // Get a link to the oldest dismissable QuadNode
 
                 Q = NW;                                  // Initialize quadrant variable for scanning
+
                 while(TT != T)                           // Destroy QuadNodes
                 {
-                while(!TT->m_Child[Q])                 // Determine the direction to the QuadNode child
-                    Q = CQUAD(Q);                        //
+                    while(!TT->m_Child[Q])                 // Determine the direction to the QuadNode child
+                    {
+                        Q = CQUAD(Q);
+                    }
 
-                TEMPC = TT->m_Child[Q];                // Get a link to the QuadNode child for the next iteration
-                TT->m_Child[Q] = NULL;                 // Detach in order to avoid premature destruction of children
-                delete TT;                             // Destroy the QuadNode
-                TT = TEMPC;                            // Proceed to the QuadNode child
+                    TEMPC = TT->m_Child[Q];                // Get a link to the QuadNode child for the next iteration
+                    TT->m_Child[Q] = NULL;                 // Detach in order to avoid premature destruction of children
+                    delete TT;                             // Destroy the QuadNode
+                    TT = TEMPC;                            // Proceed to the QuadNode child
                 }
 
                 delete T;                                // Destroy the QuadNode
 
                 if(FT)                                   // Set pointer to oldest destroyed QuadNode to NULL
-                FT->m_Child[QF] = NULL;                //
-                else                                     //
-                m_Root = NULL;                         //
+                {
+                    FT->m_Child[QF] = NULL;
+                }
+                else
+                {
+                    m_Root = NULL;
+                }
             }
         }
+    }
+
+    void CMxCifQuadTree::GetAllOverlapping(CRectangle* pP)
+    {
+
     }
 
     bool CMxCifQuadTree::Intersects(CRectangle* pP)

@@ -23,18 +23,25 @@
 
 using namespace std;
 
-ostream& outputInSVGFormat(
+ostream& appendRectangleToSVGRepresentation(
     ostream& out,
-    double centerX,
-    double centerY,
-    double width,
-    double height)
+    Containers::CRectangle* pP,
+    string fill = "black")
 {
     out << "  <rect";
-    out << " width=\"" << width << "\"";
-    out << " height=\"" << height  << "\"";
-    out << " x=\"" << (centerX - width / 2) << "\"";
-    out << " y=\"" << (centerY - height / 2) << "\"";
+    out << " width=\"" << pP->GetHalfWidth() * 2 << "\"";
+    out << " height=\"" << pP->GetHalfHeight() * 2  << "\"";
+    out << " x=\"" << pP->GetCenterX() - pP->GetHalfWidth() << "\"";
+    out << " y=\"" << pP->GetCenterY() - pP->GetHalfHeight() << "\"";
+
+    if (fill != "black")
+    {
+        string fillLine = " fill=\"";
+        fillLine += fill;
+        fillLine += "\"";
+        out << fillLine;
+    }
+
     out << " />" << endl;
 
     return out;
@@ -384,6 +391,8 @@ void mxcifquadtree_test(bool waitForKey)
     int i, N = 10000;
     int nNonIntersecting;
 
+    Containers::CRectangle EntireArea(50.0, 50.0, 50.0, 50.0);
+
     Containers::CRectangle Rectangle1(25, 25, 5, 5);
     Containers::CRectangle Rectangle2(50, 6.25, 1, 1);
     Containers::CRectangle Rectangle3(53.125, 12.5, 2.0, 2.0);
@@ -400,12 +409,12 @@ void mxcifquadtree_test(bool waitForKey)
 
     vector<Containers::CRectangle> Rectangles;
     vector<Containers::CRectangle>::iterator it;
-    Containers::CMxCifQuadTree MxCifQuadTree1(Containers::CRectangle(50.0, 50.0, 50.0, 50.0), NULL);
-    Containers::CMxCifQuadTree MxCifQuadTree2(Containers::CRectangle(50.0, 50.0, 50.0, 50.0), NULL);
+    Containers::CMxCifQuadTree MxCifQuadTree1(EntireArea, NULL);
+    Containers::CMxCifQuadTree MxCifQuadTree2(EntireArea, NULL);
 
     ofstream logFile1("log.txt");
 
-    Containers::CMxCifQuadTree MxCifQuadTree3(Containers::CRectangle(50.0, 50.0, 50.0, 50.0), &logFile1);
+    Containers::CMxCifQuadTree MxCifQuadTree3(EntireArea, &logFile1);
 
     cout << "\nMX-CIF QUADTREE TEST:\n" << endl;
 
@@ -498,10 +507,15 @@ void mxcifquadtree_test(bool waitForKey)
     auto magnification = 1.0;
 
     geometryFile << "<svg width=\"" << 100 * magnification << "\" height=\"" << 100 * magnification << "\" xmlns=\"http://www.w3.org/2000/svg\">" << endl;
+    appendRectangleToSVGRepresentation(geometryFile, &EntireArea, "gray");
+
+    Containers::CRectangle AreaOfInterest(60.0, 40.0, 20.0, 20);
+    appendRectangleToSVGRepresentation(geometryFile, &AreaOfInterest, "black");
 
     nNonIntersecting = 0;
     start = std::chrono::steady_clock::now();
     auto count = 0;
+
     for(it = Rectangles.begin(); it != Rectangles.end(); it++)
     {
         auto centerX = it->GetCenterX();
@@ -521,12 +535,7 @@ void mxcifquadtree_test(bool waitForKey)
             logFile << "Inserting " << squareSize << "x" << squareSize << " rectangle with center (x, y) = (";
             logFile << centerX << ", " << centerY << ")" << endl;
 
-            geometryFile << "  <rect";
-            geometryFile << " width=\"" << halfWidth * 2 << "\"";
-            geometryFile << " height=\"" << halfHeight * 2 << "\"";
-            geometryFile << " x=\"" << (centerX - halfWidth) << "\"";
-            geometryFile << " y=\"" << (centerY - halfHeight) << "\"";
-            geometryFile << " />" << endl;
+            appendRectangleToSVGRepresentation(geometryFile, &(*it), "blue");
         }
         else
         {
@@ -534,22 +543,6 @@ void mxcifquadtree_test(bool waitForKey)
 
             logFile << "  Rejecting " << squareSize << "x" << squareSize << " rectangle with center (x, y) = (";
             logFile << centerX << ", " << centerY << ")" << endl;
-
-            if (false)
-            {
-                geometryFile << "  <rect";
-                geometryFile << " width=\"" << halfWidth * 2 << "\"";
-                geometryFile << " height=\"" << halfHeight * 2 << "\"";
-                geometryFile << " x=\"" << (centerX - halfWidth) << "\"";
-                geometryFile << " y=\"" << (centerY - halfHeight) << "\"";
-                geometryFile << " fill=\"red\"";
-                geometryFile << " />" << endl;
-            }
-
-            // Step in and see what goes wrong..
-            //MxCifQuadTree3.Intersects(&(*it));
-
-            //break;
         }
 
         allRectanglesFile << endl;
@@ -560,6 +553,10 @@ void mxcifquadtree_test(bool waitForKey)
     end = std::chrono::steady_clock::now();
     duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
     cout << "Elapsed time for rejecting intersections: " << duration.count() << " ms\n";
+
+    // Now MxCifQuadTree3 contains a number of non intersection rectangles
+    // Here, we want to get the rectangles that intersect the area of interest (defined earlier in order to render it)
+    MxCifQuadTree3.GetAllOverlapping(&AreaOfInterest);
 
     geometryFile << "</svg>" << endl;
     geometryFile.close();
