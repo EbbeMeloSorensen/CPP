@@ -616,11 +616,6 @@ namespace Containers
         }
     }
 
-    void CMxCifQuadTree::GetAllOverlapping(CRectangle* pP)
-    {
-
-    }
-
     bool CMxCifQuadTree::Intersects(CRectangle* pP)
     {
         if(!m_Root)

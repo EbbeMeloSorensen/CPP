@@ -556,7 +556,6 @@ void mxcifquadtree_test(bool waitForKey)
 
     // Now MxCifQuadTree3 contains a number of non intersection rectangles
     // Here, we want to get the rectangles that intersect the area of interest (defined earlier in order to render it)
-    MxCifQuadTree3.GetAllOverlapping(&AreaOfInterest);
 
     geometryFile << "</svg>" << endl;
     geometryFile.close();
