@@ -24,6 +24,8 @@ namespace Containers
         const double CV,
         const AXIS V);
 
+    // Used for determining if a given rectangle intersects ANY rectangles of the MxCifQuadTree
+    // (not that useful practically)
     bool CIF_SEARCH(
         CRectangle* pP,
         CQuadNode* pQ,
@@ -32,6 +34,7 @@ namespace Containers
         double LX,
         double LY);
 
+    // Used for identifying ALL rectangls in an MxCifQuadTree thta intersect a given rectangle
     void CIF_SEARCH_ALL(
         CRectangle* pP,
         CQuadNode* pQ,
@@ -42,6 +45,8 @@ namespace Containers
         std::list<CRectangle*>& intersectingRectangles,
         std::ostream& log);
 
+    // Used for determining if a given rectangle intersects ANY rectangles of the MxCifQuadTree
+    // (not that useful practically)
     bool CROSS_AXIS(
         CRectangle* pP,
         CBinNode* pQ,
@@ -49,6 +54,7 @@ namespace Containers
         double LV,
         const AXIS V);
 
+    // Used for identifying ALL rectangls in an MxCifQuadTree thta intersect a given rectangle
     void CROSS_AXIS_ALL(
         CRectangle* pP,
         CBinNode* pQ,
@@ -58,18 +64,23 @@ namespace Containers
         std::list<CRectangle*>& intersectingRectangles,
         std::ostream& log);
 
+    // Opposite quadrant
     QUADRANT OPQUAD(
         const QUADRANT Q);
 
+    // Next quadrant clockwise
     QUADRANT CQUAD(
         const QUADRANT Q);
 
+    // Next quadrant counter clockwise
     QUADRANT CCQUAD(
         const QUADRANT Q);
 
+    // Opposite direction
     DIRECTION OPDIR(
         const DIRECTION D);
 
+    // Other axis
     AXIS OTHERAXIS(
         const AXIS V);    
 
