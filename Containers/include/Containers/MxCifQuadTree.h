@@ -14,29 +14,76 @@ namespace Containers
     class CQuadNode;
 
     // Helper functions
-    QUADRANT CIF_COMPARE(CRectangle* pP, const double CX, const double CY);
-    DIRECTION BIN_COMPARE(CRectangle* pP, const double CV, const AXIS V);
+    QUADRANT CIF_COMPARE(
+        CRectangle* pP,
+        const double CX,
+        const double CY);
 
-    bool CIF_SEARCH(CRectangle* pP, CQuadNode* pQ, 
-                         const double CX, const double CY,
-                         double LX, double LY);
+    DIRECTION BIN_COMPARE(
+        CRectangle* pP,
+        const double CV,
+        const AXIS V);
 
-    bool CROSS_AXIS(CRectangle* pP, CBinNode* pQ, 
-                         const double CV, double LV, const AXIS V);
+    bool CIF_SEARCH(
+        CRectangle* pP,
+        CQuadNode* pQ,
+        const double CX,
+        const double CY,
+        double LX,
+        double LY);
 
-    QUADRANT  OPQUAD(const QUADRANT Q);
-    QUADRANT  CQUAD (const QUADRANT Q);
-    QUADRANT  CCQUAD(const QUADRANT Q);
+    void CIF_SEARCH_ALL(
+        CRectangle* pP,
+        CQuadNode* pQ,
+        const double CX,
+        const double CY,
+        double LX,
+        double LY,
+        std::list<CRectangle*>& intersectingRectangles,
+        std::ostream& log);
 
-    DIRECTION OPDIR(const DIRECTION D);
+    bool CROSS_AXIS(
+        CRectangle* pP,
+        CBinNode* pQ,
+        const double CV,
+        double LV,
+        const AXIS V);
 
-    AXIS OTHERAXIS(const AXIS V);    
+    void CROSS_AXIS_ALL(
+        CRectangle* pP,
+        CBinNode* pQ,
+        const double CV,
+        double LV,
+        const AXIS V,
+        std::list<CRectangle*>& intersectingRectangles,
+        std::ostream& log);
+
+    QUADRANT OPQUAD(
+        const QUADRANT Q);
+
+    QUADRANT CQUAD(
+        const QUADRANT Q);
+
+    QUADRANT CCQUAD(
+        const QUADRANT Q);
+
+    DIRECTION OPDIR(
+        const DIRECTION D);
+
+    AXIS OTHERAXIS(
+        const AXIS V);    
 
     class CRectangle
     {
     public:
-        CRectangle(double cx = 0.0, double cy = 0.0, double lx = 0.0, double ly = 0.0);
-        CRectangle(const CRectangle& P);
+        CRectangle(
+            double cx = 0.0,
+            double cy = 0.0,
+            double lx = 0.0,
+            double ly = 0.0);
+
+        CRectangle(
+            const CRectangle& P);
 
         ~CRectangle();
 
@@ -45,7 +92,7 @@ namespace Containers
         double GetHalfWidth() const;
         double GetHalfHeight() const;
 
-        CRectangle& operator= (const CRectangle& P);
+        CRectangle& operator=(const CRectangle& P);
 
         bool Intersects(const CRectangle& P);
 
@@ -75,8 +122,31 @@ namespace Containers
         std::list<CRectangle*> m_Rectangles;
         CBinNode*              m_Child[2];
 
-    friend bool CROSS_AXIS(CRectangle*, CBinNode*,
-                            const double, double, const AXIS);
+    friend bool CROSS_AXIS(
+        CRectangle*,
+        CBinNode*,
+        const double,
+        double,
+        const AXIS);
+
+    friend void CROSS_AXIS_ALL(
+        CRectangle*,
+        CBinNode*,
+        const double,
+        double,
+        const AXIS,
+        std::list<CRectangle*>&,
+        std::ostream&);
+
+    friend void CIF_SEARCH_ALL(
+        CRectangle*,
+        CQuadNode*, 
+        const double,
+        const double,
+        double,
+        double,
+        std::list<CRectangle*>&,
+        std::ostream&);
 
     friend class CQuadNode;
     friend class CMxCifQuadTree;
@@ -95,9 +165,23 @@ namespace Containers
         CQuadNode*  m_Child[4];
         std::ostream* m_pLog;
  
-    friend bool CIF_SEARCH(CRectangle*, CQuadNode*, 
-                            const double, const double,
-                            double, double);
+    friend bool CIF_SEARCH(
+        CRectangle*,
+        CQuadNode*, 
+        const double,
+        const double,
+        double,
+        double);
+
+    friend void CIF_SEARCH_ALL(
+        CRectangle*,
+        CQuadNode*, 
+        const double,
+        const double,
+        double,
+        double,
+        std::list<CRectangle*>&,
+        std::ostream&);
 
     friend class CMxCifQuadTree;
     };
@@ -105,12 +189,24 @@ namespace Containers
     class CMxCifQuadTree
     {
     public:
-        CMxCifQuadTree(const CRectangle& P, std::ostream* pLog);
+        CMxCifQuadTree(
+            const CRectangle& P,
+            std::ostream* pLog);
+
         ~CMxCifQuadTree();
 
-        void Insert     (CRectangle* pP);
-        void Remove     (CRectangle* pP);
-        bool Intersects (CRectangle* pP);
+        void Insert(
+            CRectangle* pP);
+
+        void Remove(
+            CRectangle* pP);
+
+        bool IntersectsAny(
+            CRectangle* pP);
+
+        void GetAllIntersecting(
+            CRectangle* pP,
+            std::list<CRectangle*>& rectangles);
 
         void Clear();
 

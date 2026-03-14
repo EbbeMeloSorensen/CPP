@@ -407,8 +407,8 @@ void mxcifquadtree_test(bool waitForKey)
     Containers::CRectangle Rectangle12(87.5, 93.75, 2.0, 2.0);
     Containers::CRectangle RectangleQ(50.0, 75.0, 5.0, 5.0);
 
-    vector<Containers::CRectangle> Rectangles;
-    vector<Containers::CRectangle>::iterator it;
+    list<Containers::CRectangle> Rectangles;
+    list<Containers::CRectangle>::iterator it;
     Containers::CMxCifQuadTree MxCifQuadTree1(EntireArea, NULL);
     Containers::CMxCifQuadTree MxCifQuadTree2(EntireArea, NULL);
 
@@ -434,7 +434,7 @@ void mxcifquadtree_test(bool waitForKey)
     MxCifQuadTree1.Insert(&Rectangle11);  
     MxCifQuadTree1.Insert(&Rectangle12);
 
-    if(MxCifQuadTree1.Intersects(&RectangleQ))
+    if(MxCifQuadTree1.IntersectsAny(&RectangleQ))
       cout << "RectangleQ intersects a number of rectangles in MxCifQuadTree1\n" << endl; 
     else
       cout << "RectangleQ does not intersect any rectangles in MxCifQuadTree1\n" << endl; 
@@ -504,12 +504,11 @@ void mxcifquadtree_test(bool waitForKey)
     ofstream logFile("mxcifquadtree3_log.txt");
     ofstream allRectanglesFile("all_rectangles.txt");
 
-    auto magnification = 1.0;
-
-    geometryFile << "<svg width=\"" << 100 * magnification << "\" height=\"" << 100 * magnification << "\" xmlns=\"http://www.w3.org/2000/svg\">" << endl;
+    geometryFile << "<svg width=\"" << 100 << "\" height=\"" << 100  << "\" xmlns=\"http://www.w3.org/2000/svg\">" << endl;
     appendRectangleToSVGRepresentation(geometryFile, &EntireArea, "gray");
 
-    Containers::CRectangle AreaOfInterest(60.0, 40.0, 20.0, 20);
+    Containers::CRectangle AreaOfInterest(60.0, 40.0, 20.0, 20.0);
+    //Containers::CRectangle AreaOfInterest(50.0, 50.0, 50.0, 50.0);
     appendRectangleToSVGRepresentation(geometryFile, &AreaOfInterest, "black");
 
     nNonIntersecting = 0;
@@ -525,7 +524,7 @@ void mxcifquadtree_test(bool waitForKey)
 
         allRectanglesFile << centerX << ", " << centerY << ", " << halfWidth << ", " << halfHeight;
 
-        if(!MxCifQuadTree3.Intersects(&(*it)))
+        if(!MxCifQuadTree3.IntersectsAny(&(*it)))
         {
             allRectanglesFile << ", 1"; // (accepted, i.e. not intersectiong)
 
@@ -536,6 +535,7 @@ void mxcifquadtree_test(bool waitForKey)
             logFile << centerX << ", " << centerY << ")" << endl;
 
             appendRectangleToSVGRepresentation(geometryFile, &(*it), "blue");
+            //break;
         }
         else
         {
@@ -556,6 +556,14 @@ void mxcifquadtree_test(bool waitForKey)
 
     // Now MxCifQuadTree3 contains a number of non intersection rectangles
     // Here, we want to get the rectangles that intersect the area of interest (defined earlier in order to render it)
+    list<Containers::CRectangle*> intersectingRectangles;
+    MxCifQuadTree3.GetAllIntersecting(&AreaOfInterest, intersectingRectangles);
+
+    list<Containers::CRectangle*>::iterator it2;
+    for(it2 = intersectingRectangles.begin(); it2 != intersectingRectangles.end(); it2++)
+    {
+        appendRectangleToSVGRepresentation(geometryFile, *it2, "yellow");
+    }
 
     geometryFile << "</svg>" << endl;
     geometryFile.close();

@@ -44,60 +44,194 @@ namespace Containers
         }
     }    
 
-    bool CIF_SEARCH(CRectangle* pP, CQuadNode* pQ, 
-                    const double CX, const double CY,
-                    double LX, double LY)
+    void CIF_SEARCH_ALL(
+        CRectangle* pP,
+        CQuadNode* pQ, 
+        const double CX,
+        const double CY,
+        double LX,
+        double LY,
+        list<CRectangle*>& intersectingRectangles,
+        std::ostream& log)
+    {
+        if(!pQ)
+        {
+            return;
+        }
+        else
+        {
+            string message = "  Inspecting quad node of size (W, H) = (" + to_string(LX * 2) + ", " + to_string(LY * 2) + ")";
+            message += " centered at (Cx, Cy) = (" + to_string(CX) + ", " + to_string(CY) + ")";
+            log << message << endl;
+
+            if (pQ->m_Axis[0])
+            {
+                int rectangleCount = pQ->m_Axis[0]->GetSize();
+
+                message = "    bin node x holds " + to_string(rectangleCount) + " rectangles";
+                log << message << endl;
+            }
+
+            if (pQ->m_Axis[1])
+            {
+                int rectangleCount = pQ->m_Axis[1]->GetSize();
+
+                message = "    bin node x holds " + to_string(rectangleCount) + " rectangles";
+                log << message << endl;
+            }
+        }
+
+        if(!pP->Intersects(CRectangle(CX, CY, LX, LY)))
+        {
+            string message = "  no overlap between rectangle of interest and quad node of size (W, H) = (" + to_string(LX) + ", " + to_string(LY) + ")";
+            message += " centered at (Cx, Cy) = (" + to_string(CX) + ", " + to_string(CY) + ")";
+            log << message << endl;
+            return;
+        }
+
+        CROSS_AXIS_ALL(pP, pQ->m_Axis[YA], CY, LY, YA, intersectingRectangles, log);
+        CROSS_AXIS_ALL(pP, pQ->m_Axis[XA], CX, LX, XA, intersectingRectangles, log);
+
+        LX /= 2;
+        LY /= 2;
+
+        CIF_SEARCH_ALL(pP, pQ->m_Child[NW], CX + g_XF[NW] * LX, CY + g_YF[NW] * LY, LX, LY, intersectingRectangles, log);
+        CIF_SEARCH_ALL(pP, pQ->m_Child[NE], CX + g_XF[NE] * LX, CY + g_YF[NE] * LY, LX, LY, intersectingRectangles, log);
+        CIF_SEARCH_ALL(pP, pQ->m_Child[SW], CX + g_XF[SW] * LX, CY + g_YF[SW] * LY, LX, LY, intersectingRectangles, log);
+        CIF_SEARCH_ALL(pP, pQ->m_Child[SE], CX + g_XF[SE] * LX, CY + g_YF[SE] * LY, LX, LY, intersectingRectangles, log);
+    }
+
+    // Hjælpefunktion, som tager et rektangel og en quad node, inklusiv centrum og størrelse af quadnoden
+    // og så returnerer den true, hvis den finder et rektangel, som overlapper det rektangel,
+    // der blev sendt som parameter
+    bool CIF_SEARCH(
+        CRectangle* pP,
+        CQuadNode* pQ, 
+        const double CX,
+        const double CY,
+        double LX,
+        double LY)
     {
         // Is there a quadnode in the first place?
         if(!pQ)
+        {
             return false;
+        }
 
         // Is rectangle outside the rectangle of the very quadnode
         if(!pP->Intersects(CRectangle(CX, CY, LX, LY)))
+        {
             return false;
+        }
 
         // Does the rectangle intersect any rectangles in any of the two bintrees of the quadnode?
         if(CROSS_AXIS(pP, pQ->m_Axis[YA], CY, LY, YA))
+        {
             return true;
+        }
 
         if(CROSS_AXIS(pP, pQ->m_Axis[XA], CX, LX, XA))
+        {
             return true;
+        }
 
         LX /= 2;
         LY /= 2;
 
         if(CIF_SEARCH(pP, pQ->m_Child[NW], CX + g_XF[NW] * LX, CY + g_YF[NW] * LY, LX, LY))
+        {
             return true;
+        }
 
         if(CIF_SEARCH(pP, pQ->m_Child[NE], CX + g_XF[NE] * LX, CY + g_YF[NE] * LY, LX, LY))
+        {
             return true;
+        }
 
         if(CIF_SEARCH(pP, pQ->m_Child[SW], CX + g_XF[SW] * LX, CY + g_YF[SW] * LY, LX, LY))
+        {
             return true;
+        }
 
         if(CIF_SEARCH(pP, pQ->m_Child[SE], CX + g_XF[SE] * LX, CY + g_YF[SE] * LY, LX, LY))
+        {
             return true;
+        }
 
         return false;
     }
 
-    bool CROSS_AXIS(CRectangle* pP, CBinNode* pQ, const double CV, double LV, const AXIS V)
+    void CROSS_AXIS_ALL(
+        CRectangle* pP,
+        CBinNode* pQ,
+        const double CV,
+        double LV,
+        const AXIS V,
+        std::list<CRectangle*>& rectangles,
+        std::ostream& log)
     {
-        // Is there a binnode in the first place?
         if(!pQ)
-            return false;
+        {
+            return;
+        }
 
         // Does the rectangle intersect any of the rectangles of the binnode
         list<CRectangle*>::iterator it;
         for(it = pQ->m_Rectangles.begin(); it != pQ->m_Rectangles.end(); it++)
+        {
             if(pP->Intersects(**it))
-            return true;
+            {
+                rectangles.push_back(*it);
+            }
+
+            // Debugging (tilføj dem uanset om de overlapper)
+            //rectangles.push_back(*it);
+        }
+
+        LV /= 2;
+        DIRECTION D = BIN_COMPARE(pP, CV, V);
+
+        if(D == BOTH)
+        {
+            CROSS_AXIS_ALL(pP, pQ->m_Child[LEFT],  CV - LV, LV, V, rectangles, log);
+            CROSS_AXIS_ALL(pP, pQ->m_Child[RIGHT], CV + LV, LV, V, rectangles, log);
+        }
+        else
+        {
+            CROSS_AXIS_ALL(pP, pQ->m_Child[D], CV + g_VF[D] * LV, LV, V, rectangles, log);
+        }
+    }
+
+    bool CROSS_AXIS(
+        CRectangle* pP,
+        CBinNode* pQ,
+        const double CV,
+        double LV,
+        const AXIS V)
+    {
+        // Is there a binnode in the first place?
+        if(!pQ)
+        {
+            return false;
+        }
+
+        // Does the rectangle intersect any of the rectangles of the binnode
+        list<CRectangle*>::iterator it;
+        for(it = pQ->m_Rectangles.begin(); it != pQ->m_Rectangles.end(); it++)
+        {
+            if(pP->Intersects(**it))
+            {
+                return true;
+            }
+        }
 
         LV /= 2;
         DIRECTION D = BIN_COMPARE(pP, CV, V);
         if(D == BOTH)
+        {
             return CROSS_AXIS(pP, pQ->m_Child[LEFT],  CV - LV, LV, V) ||
                 CROSS_AXIS(pP, pQ->m_Child[RIGHT], CV + LV, LV, V);
+        }
 
         return CROSS_AXIS(pP, pQ->m_Child[D], CV + g_VF[D] * LV, LV, V);
     }
@@ -174,20 +308,22 @@ namespace Containers
     // Classes
 
     // Constructor
-    CRectangle::CRectangle(double cx, 
-                        double cy, 
-                        double lx, 
-                        double ly) : m_cx(cx), 
-                                        m_cy(cy), 
-                                        m_lx(lx), 
-                                        m_ly(ly)
+    CRectangle::CRectangle(
+        double cx, 
+        double cy, 
+        double lx, 
+        double ly) : m_cx(cx),
+                     m_cy(cy), 
+                     m_lx(lx),
+                     m_ly(ly)
     {}
 
     // Copy constructor
-    CRectangle::CRectangle(const CRectangle& P) : m_cx(P.m_cx),
-                                                m_cy(P.m_cy),
-                                                m_lx(P.m_lx),
-                                                m_ly(P.m_ly)
+    CRectangle::CRectangle(
+        const CRectangle& P) : m_cx(P.m_cx),
+                               m_cy(P.m_cy),
+                               m_lx(P.m_lx),
+                               m_ly(P.m_ly)
     {}
 
     // Destructor
@@ -448,12 +584,12 @@ namespace Containers
 
         if(DX == BOTH)
         {
-            Log("    Intersection with x axis on quad level " + to_string(quadNodeLevel));
+            Log("    Intersection with Y axis on quad level " + to_string(quadNodeLevel));
             pQuadNode->InsertOnAxis(pP, CY, LY, YA);
         }
         else
         {
-            Log("    Intersection with y axis on quad level " + to_string(quadNodeLevel));
+            Log("    Intersection with X axis on quad level " + to_string(quadNodeLevel));
             pQuadNode->InsertOnAxis(pP, CX, LX, XA);
         }
     }
@@ -616,7 +752,7 @@ namespace Containers
         }
     }
 
-    bool CMxCifQuadTree::Intersects(CRectangle* pP)
+    bool CMxCifQuadTree::IntersectsAny(CRectangle* pP)
     {
         if(!m_Root)
             return false;
@@ -627,12 +763,28 @@ namespace Containers
         {
             string message = "Rectangle: (Cx, Cy) = (";
             message += std::to_string((int)pP->GetCenterX()) + ", " + std::to_string((int)pP->GetCenterY()) + ")";
-            message += ", (W, H) = (" + std::to_string((int)pP->GetHalfWidth() * 2) + ", " + std::to_string((int)pP->GetHalfHeight() * 2) + ")";
+            message += ", (W, H) = (" + std::to_string(pP->GetHalfWidth() * 2) + ", " + std::to_string(pP->GetHalfHeight() * 2) + ")";
             message += " intersects existing rectangles and is therefore rejected";
             Log(message);
         }
 
         return intersection;
+    }
+
+    void CMxCifQuadTree::GetAllIntersecting(
+        CRectangle* pP,
+        list<CRectangle*>& rectangles)
+    {
+        string message = "Get all rectangles intersecting region of interest of size (W, H) = (" + to_string(pP->GetHalfWidth() * 2) + ", " + to_string(pP->GetHalfWidth() * 2) + ")";
+        message += " centered at (Cx, Cy) = (" + to_string(pP->GetCenterX()) + ", " + to_string(pP->GetCenterY()) + ")";
+        Log(message);
+
+        if(!m_Root)
+        {
+            return;
+        }
+            
+        CIF_SEARCH_ALL(pP, m_Root, m_P.m_cx, m_P.m_cy, m_P.m_lx, m_P.m_ly, rectangles, *m_pLog);
     }
 
     void CMxCifQuadTree::Clear()
