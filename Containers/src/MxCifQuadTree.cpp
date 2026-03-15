@@ -64,21 +64,21 @@ namespace Containers
             message += " centered at (Cx, Cy) = (" + to_string(CX) + ", " + to_string(CY) + ")";
             log << message << endl;
 
-            if (pQ->m_Axis[0])
-            {
-                int rectangleCount = pQ->m_Axis[0]->GetSize();
+            // if (pQ->m_Axis[0])
+            // {
+            //     int rectangleCount = pQ->m_Axis[0]->GetSize();
 
-                message = "    bin node x holds " + to_string(rectangleCount) + " rectangles";
-                log << message << endl;
-            }
+            //     message = "    bin node x holds " + to_string(rectangleCount) + " rectangles";
+            //     log << message << endl;
+            // }
 
-            if (pQ->m_Axis[1])
-            {
-                int rectangleCount = pQ->m_Axis[1]->GetSize();
+            // if (pQ->m_Axis[1])
+            // {
+            //     int rectangleCount = pQ->m_Axis[1]->GetSize();
 
-                message = "    bin node x holds " + to_string(rectangleCount) + " rectangles";
-                log << message << endl;
-            }
+            //     message = "    bin node x holds " + to_string(rectangleCount) + " rectangles";
+            //     log << message << endl;
+            // }
         }
 
         if(!pP->Intersects(CRectangle(CX, CY, LX, LY)))
@@ -176,17 +176,22 @@ namespace Containers
         }
 
         // Does the rectangle intersect any of the rectangles of the binnode
+        int rectangleCount = 0;
         list<CRectangle*>::iterator it;
         for(it = pQ->m_Rectangles.begin(); it != pQ->m_Rectangles.end(); it++)
         {
             if(pP->Intersects(**it))
             {
                 rectangles.push_back(*it);
+                rectangleCount++;
             }
 
             // Debugging (tilføj dem uanset om de overlapper)
             //rectangles.push_back(*it);
         }
+
+        string message = "    bin node centered at v = " + to_string(CV) + " holds " + to_string(rectangleCount) + " rectangles";
+        log << message << endl;
 
         LV /= 2;
         DIRECTION D = BIN_COMPARE(pP, CV, V);
@@ -761,10 +766,14 @@ namespace Containers
 
         if (m_pLog && intersection)
         {
+            double cX = pP->GetCenterX();
+            double cY = pP->GetCenterY();
+            double width = pP->GetHalfWidth() * 2;
+            double height = pP->GetHalfHeight() * 2;
             string message = "Rectangle: (Cx, Cy) = (";
-            message += std::to_string((int)pP->GetCenterX()) + ", " + std::to_string((int)pP->GetCenterY()) + ")";
-            message += ", (W, H) = (" + std::to_string(pP->GetHalfWidth() * 2) + ", " + std::to_string(pP->GetHalfHeight() * 2) + ")";
-            message += " intersects existing rectangles and is therefore rejected";
+            message += to_string(cX) + ", " + to_string(cY) + ")";
+            message += ", (W, H) = (" + to_string(width) + ", " + to_string(height) + ")";
+            message += " intersects at least 1 existing rectangle";
             Log(message);
         }
 

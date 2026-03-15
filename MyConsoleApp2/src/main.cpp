@@ -409,12 +409,15 @@ void mxcifquadtree_test(bool waitForKey)
 
     list<Containers::CRectangle> Rectangles;
     list<Containers::CRectangle>::iterator it;
-    Containers::CMxCifQuadTree MxCifQuadTree1(EntireArea, NULL);
+
+    ofstream logFile1("log1.txt");
+
+    Containers::CMxCifQuadTree MxCifQuadTree1(EntireArea, &logFile1);
     Containers::CMxCifQuadTree MxCifQuadTree2(EntireArea, NULL);
 
-    ofstream logFile1("log.txt");
+    ofstream logFile3("log3.txt");
 
-    Containers::CMxCifQuadTree MxCifQuadTree3(EntireArea, &logFile1);
+    Containers::CMxCifQuadTree MxCifQuadTree3(EntireArea, &logFile3);
 
     cout << "\nMX-CIF QUADTREE TEST:\n" << endl;
 
@@ -439,17 +442,34 @@ void mxcifquadtree_test(bool waitForKey)
     else
       cout << "RectangleQ does not intersect any rectangles in MxCifQuadTree1\n" << endl; 
 
-    cout << "Removing 3 rectangles from MxCifQuadTree1.." << endl;
+    cout << "Removing all rectangles except 3 from MxCifQuadTree1.." << endl;
     Continue(waitForKey);
 
+    MxCifQuadTree1.Remove(&Rectangle1);
+    //MxCifQuadTree1.Remove(&Rectangle2);
     MxCifQuadTree1.Remove(&Rectangle3);
     MxCifQuadTree1.Remove(&Rectangle4);
     MxCifQuadTree1.Remove(&Rectangle5);
+    //MxCifQuadTree1.Remove(&Rectangle6);
+    MxCifQuadTree1.Remove(&Rectangle7);
+    MxCifQuadTree1.Remove(&Rectangle8);
+    MxCifQuadTree1.Remove(&Rectangle9);
+    //MxCifQuadTree1.Remove(&Rectangle10);
+    MxCifQuadTree1.Remove(&Rectangle11);
+    MxCifQuadTree1.Remove(&Rectangle12);
+
+    list<Containers::CRectangle*> dummy1;
+    MxCifQuadTree1.GetAllIntersecting(&EntireArea, dummy1);
+    cout << "Rectangles currently in MxCifQuadTree1: " << dummy1.size() << endl;
 
     cout << "Clearing the rest of the rectangles from MxCifQuadTree1.." << endl;
     Continue(waitForKey);
 
     MxCifQuadTree1.Clear();
+
+    list<Containers::CRectangle*> dummy2;
+    MxCifQuadTree1.GetAllIntersecting(&EntireArea, dummy2);
+    cout << "Rectangles currently in MxCifQuadTree1: " << dummy2.size() << endl;
 
     cout << "Generating " << N << " randomly positioned squares of size " 
          << squareSize << "x" << squareSize << ".." << endl;
