@@ -536,8 +536,8 @@ namespace Containers
     void CMxCifQuadTree::Insert(CRectangle* pP)
     {
         string message = "Inserting rectangle: (Cx, Cy) = (";
-        message += std::to_string((int)pP->GetCenterX()) + ", " + std::to_string((int)pP->GetCenterY()) + ")";
-        message += ", (W, H) = (" + std::to_string((int)pP->GetHalfWidth() * 2) + ", " + std::to_string((int)pP->GetHalfHeight() * 2) + ")";
+        message += std::to_string(pP->GetCenterX()) + ", " + std::to_string(pP->GetCenterY()) + ")";
+        message += ", (W, H) = (" + std::to_string(pP->GetHalfWidth() * 2) + ", " + std::to_string(pP->GetHalfHeight() * 2) + ")";
         Log(message);
 
         CQuadNode*  pQuadNode;
@@ -631,8 +631,9 @@ namespace Containers
         T  = m_Root;
         FT = NULL;
 
-        // Identify the quad node where the rectangle resides
-        while(BIN_COMPARE(pP, CX, V = XA) != BOTH &&
+        // Identify the quad node where the rectangle resides (notice that we set the V variable when calling the BIN_COMPARE function)
+        while(
+            BIN_COMPARE(pP, CX, V = XA) != BOTH &&
             BIN_COMPARE(pP, CY, V = YA) != BOTH)
         {
             Q = CIF_COMPARE(pP, CX, CY);
@@ -677,6 +678,8 @@ namespace Containers
 
         D = BIN_COMPARE(pP, CV, V);
 
+        int binLevel = 1;
+
         while(B && D != BOTH)
         {
             if(B->m_Child[OPDIR(D)] || !B->m_Rectangles.empty())
@@ -689,9 +692,10 @@ namespace Containers
             LV /= 2;
             CV += LV * g_VF[D];
             D = BIN_COMPARE(pP, CV, V);
+            binLevel++;
         }
 
-        message = "    Specifically, rectangle resides in bin node centered at v = " + to_string(CV);
+        message = "    Specifically, rectangle resides in bin tree level " + to_string(binLevel) + " in bin node centered at v = " + to_string(CV);
         Log(message);
 
         if(!B || !B->Holds(pP)) 
@@ -700,10 +704,13 @@ namespace Containers
         }
         else if(B->m_Child[LEFT] || B->m_Child[RIGHT] || B->GetSize() > 1)
         {
+            Log("      No collapsing possible, so just removing rectangle from bin node");
             B->Remove(pP);                             // No collapsing is possible
         }
         else
         {
+            Log("      Attempting to collapse bin nodes");
+
             // Attempt to collapse BinNodes
             TB = FB ? FB->m_Child[DF] : T->m_Axis[V];  // Get a link to the oldest dismissable BinNode
 
@@ -711,14 +718,18 @@ namespace Containers
             while(TB != B)                             // Destroy BinNodes
             {
                 if(!TB->m_Child[D])                      // Determine the direction to the BinNode child
-                D = OPDIR(D);                          //
+                {
+                    D = OPDIR(D);
+                }
 
                 TEMPB = TB->m_Child[D];
                 TB->m_Child[D] = NULL;                   // Detach in order to avoid premature destruction of children
                 delete TB;
+                Log("        Collapsing bin node");
                 TB = TEMPB;
             }
 
+            Log("        Collapsing bin node");
             delete B;
 
             if(FB)
@@ -734,10 +745,16 @@ namespace Containers
                     T->m_Child[1]           ||
                     T->m_Child[2]           ||
                     T->m_Child[3])
-                return;                                // No further collapsing is possible
-                                                        // BEMAERK AT BOGEN (2026 - hvad for en bog?) IKKE HAR KRITERIET OM CHILDREN QUADNODES MED
-                                                        // DET MAA VEL VAERE EN FEJL (det er jo helt parallelt til hvad
-                                                        // der foregaar under kollaps af bintraeet)
+                {
+                    Log("      No furher collapsing possible");
+
+                    return; // No further collapsing is possible
+                            // BEMAERK AT BOGEN (2026 - hvad for en bog?) IKKE HAR KRITERIET OM CHILDREN QUADNODES MED
+                            // DET MAA VEL VAERE EN FEJL (det er jo helt parallelt til hvad
+                            // der foregaar under kollaps af bintraeet)
+                }
+
+                Log("      Attempting to collapse quad nodes");
 
                 // Attempt to collapse QuadNodes
                 TT = FT ? FT->m_Child[QF] : m_Root;      // Get a link to the oldest dismissable QuadNode
@@ -753,10 +770,12 @@ namespace Containers
 
                     TEMPC = TT->m_Child[Q];                // Get a link to the QuadNode child for the next iteration
                     TT->m_Child[Q] = NULL;                 // Detach in order to avoid premature destruction of children
+                    Log("        Collapsing quad node");
                     delete TT;                             // Destroy the QuadNode
                     TT = TEMPC;                            // Proceed to the QuadNode child
                 }
 
+                Log("        Collapsing quad node");
                 delete T;                                // Destroy the QuadNode
 
                 if(FT)                                   // Set pointer to oldest destroyed QuadNode to NULL
@@ -765,6 +784,7 @@ namespace Containers
                 }
                 else
                 {
+                    Log("          (MxCifTree is empty at this point)");
                     m_Root = NULL;
                 }
             }

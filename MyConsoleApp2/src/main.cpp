@@ -425,17 +425,17 @@ void mxcifquadtree_test(bool waitForKey)
     Continue(waitForKey);
 
     MxCifQuadTree1.Insert(&Rectangle1);  
-    // MxCifQuadTree1.Insert(&Rectangle2); 
-    // MxCifQuadTree1.Insert(&Rectangle3); 
-    // MxCifQuadTree1.Insert(&Rectangle4); 
-    // MxCifQuadTree1.Insert(&Rectangle5); 
-    // MxCifQuadTree1.Insert(&Rectangle6);  
-    // MxCifQuadTree1.Insert(&Rectangle7);
-    // MxCifQuadTree1.Insert(&Rectangle8);  
-    // MxCifQuadTree1.Insert(&Rectangle9);  
-    // MxCifQuadTree1.Insert(&Rectangle10);  
-    // MxCifQuadTree1.Insert(&Rectangle11);  
-    // MxCifQuadTree1.Insert(&Rectangle12);
+    MxCifQuadTree1.Insert(&Rectangle2); 
+    MxCifQuadTree1.Insert(&Rectangle3); 
+    MxCifQuadTree1.Insert(&Rectangle4); 
+    MxCifQuadTree1.Insert(&Rectangle5); 
+    MxCifQuadTree1.Insert(&Rectangle6);  
+    MxCifQuadTree1.Insert(&Rectangle7);
+    MxCifQuadTree1.Insert(&Rectangle8);  
+    MxCifQuadTree1.Insert(&Rectangle9);  
+    MxCifQuadTree1.Insert(&Rectangle10);  
+    MxCifQuadTree1.Insert(&Rectangle11);  
+    MxCifQuadTree1.Insert(&Rectangle12);
 
     // if(MxCifQuadTree1.IntersectsAny(&RectangleQ))
     //   cout << "RectangleQ intersects a number of rectangles in MxCifQuadTree1\n" << endl; 
@@ -446,149 +446,149 @@ void mxcifquadtree_test(bool waitForKey)
     Continue(waitForKey);
 
     MxCifQuadTree1.Remove(&Rectangle1);
-    // MxCifQuadTree1.Remove(&Rectangle2);
-    // MxCifQuadTree1.Remove(&Rectangle3);
-    // MxCifQuadTree1.Remove(&Rectangle4);
-    // MxCifQuadTree1.Remove(&Rectangle5);
-    // MxCifQuadTree1.Remove(&Rectangle6);
-    // MxCifQuadTree1.Remove(&Rectangle7);
-    // MxCifQuadTree1.Remove(&Rectangle8);
-    // MxCifQuadTree1.Remove(&Rectangle9);
-    // MxCifQuadTree1.Remove(&Rectangle10);
-    // MxCifQuadTree1.Remove(&Rectangle11);
-    // MxCifQuadTree1.Remove(&Rectangle12);
+    MxCifQuadTree1.Remove(&Rectangle2);
+    MxCifQuadTree1.Remove(&Rectangle3);
+    MxCifQuadTree1.Remove(&Rectangle4);
+    MxCifQuadTree1.Remove(&Rectangle5);
+    MxCifQuadTree1.Remove(&Rectangle6);
+    MxCifQuadTree1.Remove(&Rectangle7);
+    MxCifQuadTree1.Remove(&Rectangle8);
+    MxCifQuadTree1.Remove(&Rectangle9);
+    MxCifQuadTree1.Remove(&Rectangle10);
+    MxCifQuadTree1.Remove(&Rectangle11);
+    MxCifQuadTree1.Remove(&Rectangle12);
 
     list<Containers::CRectangle*> dummy1;
     MxCifQuadTree1.GetAllIntersecting(&EntireArea, dummy1);
     cout << "Rectangles currently in MxCifQuadTree1: " << dummy1.size() << endl;
 
-    // cout << "Clearing the rest of the rectangles from MxCifQuadTree1.." << endl;
-    // Continue(waitForKey);
+    cout << "Clearing the rest of the rectangles from MxCifQuadTree1.." << endl;
+    Continue(waitForKey);
 
-    // MxCifQuadTree1.Clear();
+    MxCifQuadTree1.Clear();
 
-    // list<Containers::CRectangle*> dummy2;
-    // MxCifQuadTree1.GetAllIntersecting(&EntireArea, dummy2);
-    // cout << "Rectangles currently in MxCifQuadTree1: " << dummy2.size() << endl;
+    list<Containers::CRectangle*> dummy2;
+    MxCifQuadTree1.GetAllIntersecting(&EntireArea, dummy2);
+    cout << "Rectangles currently in MxCifQuadTree1: " << dummy2.size() << endl;
 
-    // cout << "Generating " << N << " randomly positioned squares of size " 
-    //      << squareSize << "x" << squareSize << ".." << endl;
+    cout << "Generating " << N << " randomly positioned squares of size " 
+         << squareSize << "x" << squareSize << ".." << endl;
 
-    // //srand((unsigned) time(NULL)); // seeded with time => random numbers
-    // srand(0); // seeded with 0 => pseudo random numbers
+    //srand((unsigned) time(NULL)); // seeded with time => random numbers
+    srand(0); // seeded with 0 => pseudo random numbers
 
-    // for(i = 0; i < N; i++)
-    // {
-    //     double Frac_x = ((double)rand()) / RAND_MAX;
-    //     double Frac_y = ((double)rand()) / RAND_MAX;
+    for(i = 0; i < N; i++)
+    {
+        double Frac_x = ((double)rand()) / RAND_MAX;
+        double Frac_y = ((double)rand()) / RAND_MAX;
 
-    //     double Center_x = Frac_x * (100 - squareSize) + 0.5 * squareSize;
-    //     double Center_y = Frac_y * (100 - squareSize) + 0.5 * squareSize;
+        double Center_x = Frac_x * (100 - squareSize) + 0.5 * squareSize;
+        double Center_y = Frac_y * (100 - squareSize) + 0.5 * squareSize;
 
-    //     // Round to integer, in order to ease debugging
-    //     Center_x = round(Center_x);
-    //     Center_y = round(Center_y);
+        // Round to integer, in order to ease debugging
+        Center_x = round(Center_x);
+        Center_y = round(Center_y);
 
-    //     if(false)
-    //         cout << "(" << setiosflags(ios::fixed) << setprecision(2) << Center_x << ", " 
-    //             << setiosflags(ios::fixed) << setprecision(2) << Center_y << ")" << endl;
+        if(false)
+            cout << "(" << setiosflags(ios::fixed) << setprecision(2) << Center_x << ", " 
+                << setiosflags(ios::fixed) << setprecision(2) << Center_y << ")" << endl;
 
-    //     Rectangles.push_back(Containers::CRectangle(Center_x, Center_y, squareSize * 0.5, squareSize * 0.5));
-    // }
+        Rectangles.push_back(Containers::CRectangle(Center_x, Center_y, squareSize * 0.5, squareSize * 0.5));
+    }
 
-    // cout << "\nAdding the " << N << " squares to MxCifQuadTree2" << endl; 
-    // Continue(waitForKey);
-    // auto start = std::chrono::steady_clock::now();
-    // for(it = Rectangles.begin(); it != Rectangles.end(); it++)
-    //     MxCifQuadTree2.Insert(&(*it));
+    cout << "\nAdding the " << N << " squares to MxCifQuadTree2" << endl; 
+    Continue(waitForKey);
+    auto start = std::chrono::steady_clock::now();
+    for(it = Rectangles.begin(); it != Rectangles.end(); it++)
+        MxCifQuadTree2.Insert(&(*it));
 
-    // auto end = std::chrono::steady_clock::now();
-    // auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-    // cout << "Elapsed time for Building mxcif quad tree (homemade): " << duration.count() << " ms\n";
+    auto end = std::chrono::steady_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    cout << "Elapsed time for Building mxcif quad tree (homemade): " << duration.count() << " ms\n";
 
-    // cout << "\nRemoving the same " << N << " squares from MxCifQuadTree2 one at a time" << endl; 
-    // Continue(waitForKey);
+    cout << "\nRemoving the same " << N << " squares from MxCifQuadTree2 one at a time" << endl; 
+    Continue(waitForKey);
 
-    // start = std::chrono::steady_clock::now();
-    // for(it = Rectangles.begin(); it != Rectangles.end(); it++)
-    //     MxCifQuadTree2.Remove(&(*it));
-    // end = std::chrono::steady_clock::now();
-    // duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-    // cout << "Elapsed time for deleting rectangles: " << duration.count() << " ms\n";
+    start = std::chrono::steady_clock::now();
+    for(it = Rectangles.begin(); it != Rectangles.end(); it++)
+        MxCifQuadTree2.Remove(&(*it));
+    end = std::chrono::steady_clock::now();
+    duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    cout << "Elapsed time for deleting rectangles: " << duration.count() << " ms\n";
 
-    // cout << "\nAdding the same " << N << " squares to MxCifQuadTree3" << endl; 
-    // cout << "(but rejecting intersections this time)" << endl; 
-    // Continue(waitForKey);
+    cout << "\nAdding the same " << N << " squares to MxCifQuadTree3" << endl; 
+    cout << "(but rejecting intersections this time)" << endl; 
+    Continue(waitForKey);
 
-    // ofstream geometryFile("mxcifquadtree3.svg");
-    // ofstream logFile("mxcifquadtree3_log.txt");
-    // ofstream allRectanglesFile("all_rectangles.txt");
+    ofstream geometryFile("mxcifquadtree3.svg");
+    ofstream logFile("mxcifquadtree3_log.txt");
+    ofstream allRectanglesFile("all_rectangles.txt");
 
-    // geometryFile << "<svg width=\"" << 100 << "\" height=\"" << 100  << "\" xmlns=\"http://www.w3.org/2000/svg\">" << endl;
-    // appendRectangleToSVGRepresentation(geometryFile, &EntireArea, "gray");
+    geometryFile << "<svg width=\"" << 100 << "\" height=\"" << 100  << "\" xmlns=\"http://www.w3.org/2000/svg\">" << endl;
+    appendRectangleToSVGRepresentation(geometryFile, &EntireArea, "gray");
 
-    // Containers::CRectangle AreaOfInterest(60.0, 40.0, 20.0, 20.0);
-    // //Containers::CRectangle AreaOfInterest(50.0, 50.0, 50.0, 50.0);
-    // appendRectangleToSVGRepresentation(geometryFile, &AreaOfInterest, "black");
+    Containers::CRectangle AreaOfInterest(60.0, 40.0, 20.0, 20.0);
+    //Containers::CRectangle AreaOfInterest(50.0, 50.0, 50.0, 50.0);
+    appendRectangleToSVGRepresentation(geometryFile, &AreaOfInterest, "black");
 
-    // nNonIntersecting = 0;
-    // start = std::chrono::steady_clock::now();
-    // auto count = 0;
+    nNonIntersecting = 0;
+    start = std::chrono::steady_clock::now();
+    auto count = 0;
 
-    // for(it = Rectangles.begin(); it != Rectangles.end(); it++)
-    // {
-    //     auto centerX = it->GetCenterX();
-    //     auto centerY = it->GetCenterY();
-    //     auto halfWidth = it->GetHalfWidth();
-    //     auto halfHeight = it->GetHalfHeight();
+    for(it = Rectangles.begin(); it != Rectangles.end(); it++)
+    {
+        auto centerX = it->GetCenterX();
+        auto centerY = it->GetCenterY();
+        auto halfWidth = it->GetHalfWidth();
+        auto halfHeight = it->GetHalfHeight();
 
-    //     allRectanglesFile << centerX << ", " << centerY << ", " << halfWidth << ", " << halfHeight;
+        allRectanglesFile << centerX << ", " << centerY << ", " << halfWidth << ", " << halfHeight;
 
-    //     if(!MxCifQuadTree3.IntersectsAny(&(*it)))
-    //     {
-    //         allRectanglesFile << ", 1"; // (accepted, i.e. not intersectiong)
+        if(!MxCifQuadTree3.IntersectsAny(&(*it)))
+        {
+            allRectanglesFile << ", 1"; // (accepted, i.e. not intersectiong)
 
-    //         MxCifQuadTree3.Insert(&(*it));
-    //         nNonIntersecting++;
+            MxCifQuadTree3.Insert(&(*it));
+            nNonIntersecting++;
 
-    //         logFile << "Inserting " << squareSize << "x" << squareSize << " rectangle with center (x, y) = (";
-    //         logFile << centerX << ", " << centerY << ")" << endl;
+            logFile << "Inserting " << squareSize << "x" << squareSize << " rectangle with center (x, y) = (";
+            logFile << centerX << ", " << centerY << ")" << endl;
 
-    //         appendRectangleToSVGRepresentation(geometryFile, &(*it), "blue");
-    //         //break;
-    //     }
-    //     else
-    //     {
-    //         allRectanglesFile << ", 0"; // (rejected due to intersection)
+            appendRectangleToSVGRepresentation(geometryFile, &(*it), "blue");
+            //break;
+        }
+        else
+        {
+            allRectanglesFile << ", 0"; // (rejected due to intersection)
 
-    //         logFile << "  Rejecting " << squareSize << "x" << squareSize << " rectangle with center (x, y) = (";
-    //         logFile << centerX << ", " << centerY << ")" << endl;
-    //     }
+            logFile << "  Rejecting " << squareSize << "x" << squareSize << " rectangle with center (x, y) = (";
+            logFile << centerX << ", " << centerY << ")" << endl;
+        }
 
-    //     allRectanglesFile << endl;
+        allRectanglesFile << endl;
 
-    //     count++;
-    // }
+        count++;
+    }
     
-    // end = std::chrono::steady_clock::now();
-    // duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-    // cout << "Elapsed time for rejecting intersections: " << duration.count() << " ms\n";
+    end = std::chrono::steady_clock::now();
+    duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    cout << "Elapsed time for rejecting intersections: " << duration.count() << " ms\n";
 
-    // // Now MxCifQuadTree3 contains a number of non intersection rectangles
-    // // Here, we want to get the rectangles that intersect the area of interest (defined earlier in order to render it)
-    // list<Containers::CRectangle*> intersectingRectangles;
-    // MxCifQuadTree3.GetAllIntersecting(&AreaOfInterest, intersectingRectangles);
+    // Now MxCifQuadTree3 contains a number of non intersection rectangles
+    // Here, we want to get the rectangles that intersect the area of interest (defined earlier in order to render it)
+    list<Containers::CRectangle*> intersectingRectangles;
+    MxCifQuadTree3.GetAllIntersecting(&AreaOfInterest, intersectingRectangles);
 
-    // list<Containers::CRectangle*>::iterator it2;
-    // for(it2 = intersectingRectangles.begin(); it2 != intersectingRectangles.end(); it2++)
-    // {
-    //     appendRectangleToSVGRepresentation(geometryFile, *it2, "yellow");
-    // }
+    list<Containers::CRectangle*>::iterator it2;
+    for(it2 = intersectingRectangles.begin(); it2 != intersectingRectangles.end(); it2++)
+    {
+        appendRectangleToSVGRepresentation(geometryFile, *it2, "yellow");
+    }
 
-    // geometryFile << "</svg>" << endl;
-    // geometryFile.close();
-    // logFile.close();
-    // allRectanglesFile.close();
+    geometryFile << "</svg>" << endl;
+    geometryFile.close();
+    logFile.close();
+    allRectanglesFile.close();
 }
 
 int main()
