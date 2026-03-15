@@ -601,6 +601,11 @@ namespace Containers
 
     void CMxCifQuadTree::Remove(CRectangle* pP)
     {
+        string message = "Removing rectangle: (Cx, Cy) = (";
+        message += std::to_string((int)pP->GetCenterX()) + ", " + std::to_string((int)pP->GetCenterY()) + ")";
+        message += ", (W, H) = (" + std::to_string((int)pP->GetHalfWidth() * 2) + ", " + std::to_string((int)pP->GetHalfHeight() * 2) + ")";
+        Log(message);
+
         if (!m_Root)
         {
             return;
@@ -626,6 +631,7 @@ namespace Containers
         T  = m_Root;
         FT = NULL;
 
+        // Identify the quad node where the rectangle resides
         while(BIN_COMPARE(pP, CX, V = XA) != BOTH &&
             BIN_COMPARE(pP, CY, V = YA) != BOTH)
         {
@@ -650,6 +656,10 @@ namespace Containers
             CY += LY * g_YF[Q];
         }
 
+        string axis = V == XA ? "Y" : "X";
+        message = "  Rectangle resides in " + axis + " axis of quad node centered at (x, y) = (" + to_string(CX) + ", " + to_string(CY) + ")";
+        Log(message);
+
         V  = OTHERAXIS(V);
         B  = T->m_Axis[V];
         FB = NULL;
@@ -659,7 +669,8 @@ namespace Containers
             CV = CX;
             LV = LX;
         }
-        else{
+        else
+        {
             CV = CY;
             LV = LY;
         }
@@ -679,6 +690,9 @@ namespace Containers
             CV += LV * g_VF[D];
             D = BIN_COMPARE(pP, CV, V);
         }
+
+        message = "    Specifically, rectangle resides in bin node centered at v = " + to_string(CV);
+        Log(message);
 
         if(!B || !B->Holds(pP)) 
         {
