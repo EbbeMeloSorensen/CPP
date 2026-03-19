@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <conio.h>
 #include <time.h>
 #include <fstream>
 #include <sstream>
@@ -52,7 +51,7 @@ void Continue(bool waitForKey = false)
     if(waitForKey)
     {
         cout << "\n(Press any key to proceed)..\n" << endl;
-        _getch();
+        cin.get();
     }
     else
         cout << "\n(Computing..)\n" << endl;
