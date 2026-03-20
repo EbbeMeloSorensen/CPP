@@ -8,6 +8,7 @@ TEST(AddiwwtionTests, AddsPosiwwtiveNumbers)
 {
     CDoubleHeap heap1;
     int size = heap1.GetSize();
+    size = 2; // Make the test fail
     
     EXPECT_EQ(0, size);
 }
